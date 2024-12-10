@@ -60,7 +60,7 @@ const AddHabitScreen = () => {
       await addHabit(newHabit); // Save to AsyncStorage
       setNotification({ message: 'Habit added successfully!', type: 'success' });
       setTimeout(() => {
-        navigation.goBack();
+        //navigation.goBack();
       }, 1500);
     } catch (error) {
       console.error('Error adding habit:', error);
