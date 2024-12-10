@@ -11,7 +11,9 @@ This is the mobile version of the Habit Tracker application, built using React N
 - Notifications for habit reminders
 
 ## Current Progress
-- Set up navigation between `HomeScreen` and `AddHabitScreen`.
+- Set up navigation between `HomeScreen` and `AddHabitScreen`, `EditHabitScreen` and `HabitListScreen`
+- Using AsyncStorage for Habit Storage
+- Implemented CRUD operations for habits.
 
 ## How to Run
 1. Clone the repository: `git clone https://github.com/johnnycwatt/Habit-Tracker-Mobile.git`

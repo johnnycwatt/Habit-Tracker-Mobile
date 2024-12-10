@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,40 +7,31 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import RNPickerSelect from 'react-native-picker-select';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import CheckBox from '@react-native-community/checkbox';
-import { addHabit } from '../database/habits';
+import { updateHabit } from '../database/habits';
 
-const AddHabitScreen = () => {
-  const [name, setName] = useState('');
-  const [frequency, setFrequency] = useState('Daily');
-  const [startDate, setStartDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [customDays, setCustomDays] = useState({
-    Monday: false,
-    Tuesday: false,
-    Wednesday: false,
-    Thursday: false,
-    Friday: false,
-    Saturday: false,
-    Sunday: false,
-  });
-  const [notification, setNotification] = useState({ message: '',type: '' });
+const EditHabitScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const { habit } = route.params; // Retrieve the habit passed from the HabitListScreen
 
-  const handleAddHabit = async () => {
+  const [name, setName] = useState(habit.name);
+  const [frequency, setFrequency] = useState(habit.frequency);
+  const [customDays, setCustomDays] = useState(
+    habit.customDays ? habit.customDays.reduce((acc, day) => ({ ...acc, [day]: true }), {}) : {}
+  );
+  const [notification, setNotification] = useState({ message: '', type: '' });
+
+  const handleSaveChanges = async () => {
     if (!name.trim()) {
       setNotification({ message: 'Name is required!', type: 'error' });
       return;
     }
 
-    const selectedCustomDays = Object.keys(customDays).filter(
-      (day) => customDays[day]
-    );
-
-    if (frequency === 'Custom' &&selectedCustomDays.length === 0) {
+    const selectedCustomDays = Object.keys(customDays).filter((day) => customDays[day]);
+    if (frequency === 'Custom' && selectedCustomDays.length === 0) {
       setNotification({
         message: 'Please select at least one day for Custom frequency.',
         type: 'error',
@@ -48,34 +39,30 @@ const AddHabitScreen = () => {
       return;
     }
 
-    const newHabit = {
+    const updatedHabit = {
       name,
-      startDate: startDate.toISOString().split('T')[0], //YYYY-MM-DD
       frequency,
       customDays: frequency === 'Custom' ? selectedCustomDays : null,
-      color: '#ffffff',
     };
 
     try {
-      await addHabit(newHabit); // Save to AsyncStorage
-      setNotification({ message: 'Habit added successfully!', type: 'success' });
-      setTimeout(() => {
-        navigation.goBack();
-      }, 1500);
+      await updateHabit(habit.name, updatedHabit);
+      setNotification({ message: 'Habit updated successfully!', type: 'success' });
+      setTimeout(() => navigation.goBack(), 1500);
     } catch (error) {
-      console.error('Error adding habit:', error);
-      setNotification({ message: 'Failed to add habit. Please try again.', type: 'error' });
+      console.error('Error updating habit:', error);
+      setNotification({ message: 'Failed to update habit.', type: 'error' });
     }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Notification Message */}
+      {/* Notification */}
       {notification.message ? (
         <Text
           style={[
             styles.notification,
-            notification.type ==='success' ? styles.success : styles.error,
+            notification.type === 'success' ? styles.success : styles.error,
           ]}
         >
           {notification.message}
@@ -112,45 +99,25 @@ const AddHabitScreen = () => {
       {frequency === 'Custom' && (
         <View style={styles.customDaysContainer}>
           <Text style={styles.label}>Select Custom Days:</Text>
-          {Object.keys(customDays).map((day) => (
-            <View key={day} style={styles.customDay}>
-              <CheckBox
-                value={customDays[day]}
-                onValueChange={(newValue) =>
-                  setCustomDays({ ...customDays,[day]: newValue })
-                }
-              />
-              <Text style={styles.customDayText}>{day}</Text>
-            </View>
-          ))}
+          {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(
+            (day) => (
+              <View key={day} style={styles.customDay}>
+                <CheckBox
+                  value={customDays[day]}
+                  onValueChange={(newValue) =>
+                    setCustomDays({ ...customDays, [day]: newValue })
+                  }
+                />
+                <Text style={styles.customDayText}>{day}</Text>
+              </View>
+            )
+          )}
         </View>
       )}
 
-      {/* Start Date Selector */}
-      <Text style={styles.label}>Start Date:</Text>
-      <TouchableOpacity
-        style={styles.input}
-        onPress={() => setShowDatePicker(true)}
-      >
-        <Text>{startDate.toDateString()}</Text>
-      </TouchableOpacity>
-      {showDatePicker &&(
-        <DateTimePicker
-          value={startDate}
-          mode="date"
-          display="default"
-          onChange={(event, selectedDate) => {
-            setShowDatePicker(false);
-            if (selectedDate) {
-              setStartDate(selectedDate);
-            }
-          }}
-        />
-      )}
-
-      {/* Add Habit Button */}
-      <TouchableOpacity style={styles.addButton} onPress={handleAddHabit}>
-        <Text style={styles.addButtonText}>Add Habit</Text>
+      {/* Save Changes Button */}
+      <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
+        <Text style={styles.saveButtonText}>Save Changes</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -177,12 +144,6 @@ const styles = StyleSheet.create({
   error: {
     color: '#d32f2f',
     backgroundColor: '#ffebee',
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
   },
   input: {
     borderWidth: 1,
@@ -218,7 +179,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
-  addButton: {
+  saveButton: {
     backgroundColor: '#e0f7fa',
     borderWidth: 1,
     borderColor: '#0288d1',
@@ -227,11 +188,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 16,
   },
-  addButtonText: {
+  saveButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#0288d1',
   },
 });
 
-export default AddHabitScreen;
+export default EditHabitScreen;
