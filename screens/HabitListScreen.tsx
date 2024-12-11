@@ -166,6 +166,17 @@ const HabitListScreen = () => {
               </TouchableOpacity>
 
               <TouchableOpacity
+                style={[styles.modalButton, styles.viewProgressButton]}
+                onPress={() => {
+                  navigation.navigate('ProgressScreen', { habit: selectedHabit });
+                  setModalVisible(false);
+                }}
+              >
+                <Text style={styles.viewProgressButtonText}>View Progress</Text>
+              </TouchableOpacity>
+
+
+              <TouchableOpacity
                 style={[styles.modalButton, styles.editButton]}
                 onPress={() => {
                   navigation.navigate('EditHabit', { habit: selectedHabit });
@@ -298,6 +309,20 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     fontSize: 16,
     color: '#0288d1',
+  },
+
+  viewProgressButton: {
+    backgroundColor: '#f3e5f5', // Light purple background
+    borderColor: '#ab47bc', // Border color (darker purple)
+    borderWidth: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  viewProgressButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   addButton: {
     backgroundColor: '#e0f7fa',

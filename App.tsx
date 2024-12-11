@@ -6,7 +6,7 @@ import HomeScreen from './screens/HomeScreen';
 import AddHabitScreen from './screens/AddHabitScreen';
 import HabitListScreen from './screens/HabitListScreen';
 import EditHabitScreen from './screens/EditHabitScreen';
-
+import ProgressScreen from './screens/ProgressScreen';
 const Stack = createStackNavigator();
 
 // Custom Light Theme for Navigation
@@ -55,6 +55,11 @@ export default function App() {
           name="EditHabit"
           component={EditHabitScreen}
           options={{ title: 'Edit Habit' }}
+        />
+        <Stack.Screen
+          name="ProgressScreen"
+          component={ProgressScreen}
+          options={{ title: 'Habit Progress' }}
         />
 
       </Stack.Navigator>
