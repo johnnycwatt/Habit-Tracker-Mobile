@@ -2,19 +2,37 @@
 
 This is the mobile version of the Habit Tracker application, built using React Native with Expo.
 
-## Features (Planned)
-- Add, edit, and delete habits
-- Daily, Weekly, Monthly and Custom Frequncies (e.g. Mon-Wed-Fri or Sat-Sun)
-- Track progress with streaks and calendar views
-- Track weekly/monthly consistency metrics and completion rates
-- Monthly Reporting.
-- Notifications for habit reminders
+## Features
 
-## Current Progress
-- Set up navigation between `HomeScreen` and `AddHabitScreen`, `EditHabitScreen` and `HabitListScreen`
-- Using AsyncStorage for Habit Storage
-- Implemented CRUD operations for habits.
-- ProgressScreen with Weekly/Monthly Consistency Metrics and Completion Rates. Also displays streaks
+### Implemented
+- Add, edit, and delete habits.
+- Support for multiple frequencies: **Daily**, **Weekly**, **Monthly**, and **Custom** (e.g., Mon-Wed-Fri or Sat-Sun).
+- Progress tracking with:
+    - **Current Streaks** and **Best Streaks**.
+    - **Weekly** and **Monthly Completion Rates**.
+    - **Weekly** and **Monthly Consistency Metrics**.
+- Calendar view highlighting:
+    - Completed habit dates for the current and previous months (light green).
+    - Current Date (light blue) 
+- Navigation between `HomeScreen`, `AddHabitScreen`, `EditHabitScreen`, `HabitListScreen`, and `ProgressScreen`.
+- CRUD operations using AsyncStorage for habit storage.
+
+### Planned
+- Monthly Reporting.
+- Notifications for habit reminders and milestones.
+- Export data for sharing and backups.
+
+## Gallery
+
+Below are screenshots which show the current status of the Habit Tracker Mobile app:
+
+| **Home Screen** | **Habit List Screen** | **Add Habit Screen** |
+|------------------|-----------------------|-----------------------|
+| ![Home Screen](./screenshots/homescreen.jpg) | ![Habit List Screen](./screenshots/HabitListScreen.jpg) | ![Add Habit Screen](./screenshots/AddHabitScreen.jpg) |
+
+| **Habit List (Menu)**                                  | **Progress Screen** |
+|--------------------------------------------------------|---------------------|
+| ![Habit List Menu](./screenshots/HabitListScreen2.jpg) | ![Progress Screen](./screenshots/ProgressScreen.jpg) |
 
 ## How to Run
 1. Clone the repository: `git clone https://github.com/johnnycwatt/Habit-Tracker-Mobile.git`
