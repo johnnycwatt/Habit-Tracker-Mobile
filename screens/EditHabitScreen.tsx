@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,10 +6,10 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Switch,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import RNPickerSelect from 'react-native-picker-select';
-import CheckBox from '@react-native-community/checkbox';
 import { updateHabit } from '../database/habits';
 
 const EditHabitScreen = () => {
@@ -102,13 +102,13 @@ const EditHabitScreen = () => {
           {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(
             (day) => (
               <View key={day} style={styles.customDay}>
-                <CheckBox
+                <Text style={styles.customDayText}>{day}</Text>
+                <Switch
                   value={customDays[day]}
                   onValueChange={(newValue) =>
                     setCustomDays({ ...customDays, [day]: newValue })
                   }
                 />
-                <Text style={styles.customDayText}>{day}</Text>
               </View>
             )
           )}
@@ -171,11 +171,11 @@ const styles = StyleSheet.create({
   },
   customDay: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
   },
   customDayText: {
-    marginLeft: 8,
     fontSize: 16,
     color: '#333',
   },

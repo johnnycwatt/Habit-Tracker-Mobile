@@ -6,11 +6,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Switch,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import RNPickerSelect from 'react-native-picker-select';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import CheckBox from '@react-native-community/checkbox';
 import { addHabit } from '../database/habits';
 
 const AddHabitScreen = () => {
@@ -114,11 +114,13 @@ const AddHabitScreen = () => {
           <Text style={styles.label}>Select Custom Days:</Text>
           {Object.keys(customDays).map((day) => (
             <View key={day} style={styles.customDay}>
-              <CheckBox
+              <Switch
                 value={customDays[day]}
                 onValueChange={(newValue) =>
-                  setCustomDays({ ...customDays,[day]: newValue })
+                  setCustomDays({ ...customDays, [day]: newValue })
                 }
+                trackColor={{ false: '#ccc', true: '#0288d1' }} // Customize colors
+                thumbColor={customDays[day] ? '#ffffff' : '#f4f3f4'}
               />
               <Text style={styles.customDayText}>{day}</Text>
             </View>

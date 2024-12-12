@@ -24,6 +24,16 @@ const ProgressScreen = () => {
   const [monthlyConsistency, setMonthlyConsistency] = useState(0);
 
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [today, setToday] = useState(new Date());
+
+  useEffect(() => {
+    // Update today's date dynamically
+    const interval = setInterval(() => {
+      setToday(new Date());
+    }, 1000 * 60); // Update every minute
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     // Calculate stats
@@ -36,8 +46,8 @@ const ProgressScreen = () => {
   }, [habit]);
 
   const formatCompletionDates = (dates: string[]) => {
-    const today = new Date().toISOString().split("T")[0];
     const formatted: { [key: string]: { selected: boolean; selectedColor: string } } = {};
+    const todayFormatted = today.toISOString().split("T")[0];
 
     dates.forEach((date) => {
       const formattedDate = new Date(date).toISOString().split("T")[0];
@@ -45,8 +55,8 @@ const ProgressScreen = () => {
     });
 
     // Highlight today if not completed
-    if (!formatted[today]) {
-      formatted[today] = { selected: true, selectedColor: "#ADD8E6" }; // Light blue for today
+    if (!formatted[todayFormatted]) {
+      formatted[todayFormatted] = { selected: true, selectedColor: "#ADD8E6" }; // Light blue for today
     }
 
     return formatted;
@@ -62,14 +72,10 @@ const ProgressScreen = () => {
 
   const markedDates = formatCompletionDates(filteredCompletionDates);
 
-  //maxDate
-  const today = new Date();
   const maxDate = today.toISOString().split("T")[0];
-
   const isCurrentMonth =
-    currentMonth.getFullYear() === new Date().getFullYear() &&
-    currentMonth.getMonth() === new Date().getMonth();
-
+    currentMonth.getFullYear() === today.getFullYear() &&
+    currentMonth.getMonth() === today.getMonth();
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -80,19 +86,17 @@ const ProgressScreen = () => {
       <Calendar
         current={currentMonth.toISOString().split("T")[0]}
         markedDates={markedDates}
-        maxDate={maxDate} //grey out future days
-        disableArrowRight={isCurrentMonth} //prevent navigation to future months
+        maxDate={maxDate} // Grey out future days
+        disableArrowRight={isCurrentMonth} // Prevent navigation to future months
         theme={{
-          selectedDayBackgroundColor: "#ADD8E6", // Light blue for today
+          today: "#ADD8E6", // Light blue for today
           todayTextColor: "red",
           arrowColor: "black",
         }}
-
         onMonthChange={(month) => {
           setCurrentMonth(new Date(month.year, month.month - 1));
         }}
       />
-
 
       <Text style={styles.calendarTitle}>Habit Statistics</Text>
 
