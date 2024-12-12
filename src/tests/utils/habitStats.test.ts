@@ -180,6 +180,16 @@ describe("HabitStats Utility Functions", () => {
     expect(calculateMonthlyCompletionRate(habit)).toBe(100); // Fully completed December
   });
 
+  it("calculates monthly completion rate for habits starting mid-month", () => {
+    const habit = createHabit({
+      startDate: "2024-12-9",
+      frequency: "Daily",
+      completionDates: ["2024-12-9", "2024-12-11"], // Missed 10th.
+    });
+
+    expect(calculateMonthlyCompletionRate(habit)).toBe(67); // 2 out of 3 days (Did on 9th, missed 10th , did on 11th)
+  });
+
 
   // Monthly Consistency Tests
   it("calculates monthly consistency for daily habits", () => {
@@ -209,4 +219,7 @@ describe("HabitStats Utility Functions", () => {
 
     expect(calculateMonthlyConsistency(habit)).toBe(3);
   });
+
+
+
 });

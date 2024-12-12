@@ -19,6 +19,20 @@ const getStartOfWeek = (date: Date): Date => {
 const getStartOfMonth = (date: Date): Date =>
   new Date(date.getFullYear(), date.getMonth(), 1);
 
+const getAdjustedStartOfMonth = (habit: Habit, today: Date): Date => {
+  const habitStartDate = new Date(habit.startDate);
+  const startOfMonth = getStartOfMonth(today);
+
+  // If the habit started this month, adjust the start to the habit's start date
+  if (
+    habitStartDate.getFullYear() === today.getFullYear() &&
+    habitStartDate.getMonth() === today.getMonth()
+  ) {
+    return habitStartDate;
+  }
+  return startOfMonth;
+};
+
 export const calculateCurrentStreak = (habit: Habit): number => {
   const completedDates = getCompletedDates(habit).sort((a, b) => b.getTime() - a.getTime());
   if (!completedDates.length) return 0;
@@ -142,52 +156,72 @@ export const calculateWeeklyCompletionRate = (habit: Habit): number => {
 export const calculateMonthlyCompletionRate = (habit: Habit): number => {
   const completedDates = getCompletedDates(habit);
   const today = new Date();
-  const startOfMonth = getStartOfMonth(today);
+  const adjustedStartOfMonth = getAdjustedStartOfMonth(habit, today);
 
   let totalExpected = 0;
   let completed = 0;
 
   switch (habit.frequency) {
     case "Daily":
-      totalExpected = today.getDate(); // Days up to today
-      completed = completedDates.filter((date) => date >= startOfMonth && date <= today).length;
+      totalExpected =
+        differenceInCalendarDays(today, adjustedStartOfMonth) + 1; // Days from adjusted start to today
+      completed = completedDates.filter(
+        (date) => date >= adjustedStartOfMonth && date <= today
+      ).length;
       break;
 
-
     case "Weekly":
-      totalExpected = Math.ceil(today.getDate() / 7); // approx weeks so far in the month
-      completed = completedDates.filter((date) => date >= startOfMonth).length;
+      totalExpected =
+        Math.ceil(
+          differenceInCalendarDays(today, adjustedStartOfMonth) / 7
+        ) || 1; // Approx weeks since adjusted start
+      completed = completedDates.filter(
+        (date) => date >= adjustedStartOfMonth
+      ).length;
       break;
 
     case "Monthly":
-      totalExpected = 1;
+      totalExpected = 1; // One completion expected in the month
       completed = completedDates.some(
         (date) =>
-          date >= startOfMonth && date < new Date(today.getFullYear(), today.getMonth() + 1, 1) // Check if completed within the current month
+          date >= adjustedStartOfMonth &&
+          date < new Date(today.getFullYear(), today.getMonth() + 1, 1)
       )
-        ?1
-        :0;
+        ? 1
+        : 0;
       break;
 
     case "Custom":
-      const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-      totalExpected = habit.customDays?.reduce((count, day) => {
-        for (let d = 1; d <= daysInMonth; d++) {
-          const date = new Date(today.getFullYear(), today.getMonth(), d);
-          if (date.getDay() === day) count++;
-        }
-        return count;
-      }, 0) ||0;
+      const customDays = habit.customDays || [];
+      totalExpected =
+        customDays.reduce((count, day) => {
+          for (
+            let d = adjustedStartOfMonth.getDate();
+            d <= today.getDate();
+            d++
+          ) {
+            const date = new Date(
+              today.getFullYear(),
+              today.getMonth(),
+              d
+            );
+            if (date.getDay() === day) count++;
+          }
+          return count;
+        }, 0) || 0;
 
       completed = completedDates.filter((date) => {
         const dayOfWeek = date.getDay();
-        return date >= startOfMonth && habit.customDays?.includes(dayOfWeek);
+        return (
+          date >= adjustedStartOfMonth && customDays.includes(dayOfWeek)
+        );
       }).length;
       break;
-
   }
 
-  return totalExpected > 0? Math.round((completed / totalExpected) * 100) : 0;
+  return totalExpected > 0
+    ? Math.round((completed / totalExpected) * 100)
+    : 0;
 };
 
 
@@ -224,11 +258,14 @@ export const calculateMonthlyConsistency = (habit: Habit): number => {
   let consecutiveIncompleteMonths = 0;
 
   const today = new Date();
-  let currentMonth = getStartOfMonth(today);
+  const habitStartDate = new Date(habit.startDate);
+  let currentMonth = getAdjustedStartOfMonth(habit, today);
 
   while (consecutiveIncompleteMonths < MAX_CONSECUTIVE_INCOMPLETE) {
     const monthCompletions = completedDates.filter(
-      (date) => date >= currentMonth && date < new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)
+      (date) =>
+        date >= currentMonth &&
+        date < new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)
     ).length;
 
     if (monthCompletions > 0) {
@@ -238,7 +275,9 @@ export const calculateMonthlyConsistency = (habit: Habit): number => {
       consecutiveIncompleteMonths++;
     }
 
-    currentMonth.setMonth(currentMonth.getMonth() - 1); //check the previous month
+    // Move to the previous month only if it's after the habit's start date
+    currentMonth.setMonth(currentMonth.getMonth() - 1);
+    if (currentMonth < habitStartDate) break;
   }
 
   return consistentMonths;

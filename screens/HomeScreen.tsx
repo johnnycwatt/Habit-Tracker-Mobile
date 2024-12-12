@@ -117,6 +117,19 @@ const HomeScreen = () => {
       >
         <Text style={styles.buttonText}>View Habits</Text>
       </TouchableOpacity>
+
+      {/* Reports Button */}
+      <TouchableOpacity
+        style={styles.button}
+        activeOpacity={0.7}
+        onPress={() => {
+          navigation.navigate('ReportScreen');
+          handleRefresh();
+        }}
+      >
+        <Text style={styles.buttonText}>View Reports</Text>
+      </TouchableOpacity>
+
     </View>
   );
 };

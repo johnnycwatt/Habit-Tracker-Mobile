@@ -7,6 +7,7 @@ import AddHabitScreen from './screens/AddHabitScreen';
 import HabitListScreen from './screens/HabitListScreen';
 import EditHabitScreen from './screens/EditHabitScreen';
 import ProgressScreen from './screens/ProgressScreen';
+import ReportScreen from "./screens/ReportScreen";
 const Stack = createStackNavigator();
 
 // Custom Light Theme for Navigation
@@ -60,6 +61,11 @@ export default function App() {
           name="ProgressScreen"
           component={ProgressScreen}
           options={{ title: 'Habit Progress' }}
+        />
+        <Stack.Screen
+          name="ReportScreen"
+          component={ReportScreen}
+          options={{ title: 'Monthly Report' }}
         />
 
       </Stack.Navigator>
