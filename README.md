@@ -16,8 +16,11 @@ This is the mobile version of the Habit Tracker application, built using React N
     - Current Date (light blue) 
 - Navigation between `HomeScreen`, `AddHabitScreen`, `EditHabitScreen`, `HabitListScreen`, and `ProgressScreen`.
 - CRUD operations using AsyncStorage for habit storage.
-- Monthly Reports which offer a summary of the Best performing habits and the frequently missed habits
+- Monthly Reports which offer the following:
   - Color coded reporting with habits displayed either Light Green, Light Yellow, or Light Red depending on their completion rates.
+  - Summary section showing best habit, total habits, average completion, and frequently missed habits.
+  - Filter options to view habits by frequency (Daily, Weekly, Monthly, Custom).
+
 
 
 ### Planned

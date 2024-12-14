@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
+import { Habit } from "../database/habit";
+import { Calendar } from "react-native-calendars";
+import * as Progress from "react-native-progress";
+import { BarChart, Grid, YAxis } from "react-native-svg-charts";
 import {
   calculateCurrentStreak,
   calculateBestStreak,
@@ -9,8 +13,6 @@ import {
   calculateWeeklyConsistency,
   calculateMonthlyConsistency,
 } from "../src/utils/habitStats";
-import { Habit } from "../database/habit";
-import { Calendar } from "react-native-calendars";
 
 const ProgressScreen = () => {
   const route = useRoute<RouteProp<{ params: { habit: Habit } }, "params">>();
@@ -22,27 +24,36 @@ const ProgressScreen = () => {
   const [monthlyCompletionRate, setMonthlyCompletionRate] = useState(0);
   const [weeklyConsistency, setWeeklyConsistency] = useState(0);
   const [monthlyConsistency, setMonthlyConsistency] = useState(0);
+  const [monthlyCompletions, setMonthlyCompletions] = useState<number[]>([]);
 
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [today, setToday] = useState(new Date());
 
   useEffect(() => {
-    // Update today's date dynamically
     const interval = setInterval(() => {
       setToday(new Date());
-    }, 1000 * 60); // Update every minute
+    }, 1000 * 60);
 
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    // Calculate stats
     setCurrentStreak(calculateCurrentStreak(habit));
     setBestStreak(calculateBestStreak(habit));
     setWeeklyCompletionRate(calculateWeeklyCompletionRate(habit));
     setMonthlyCompletionRate(calculateMonthlyCompletionRate(habit));
     setWeeklyConsistency(calculateWeeklyConsistency(habit));
     setMonthlyConsistency(calculateMonthlyConsistency(habit));
+
+    const completions = Array(12).fill(0);
+    habit.completionDates.forEach((date) => {
+      const completionDate = new Date(date);
+      if (completionDate.getFullYear() === today.getFullYear()) {
+        const monthIndex = completionDate.getMonth();
+        completions[monthIndex]++;
+      }
+    });
+    setMonthlyCompletions(completions);
   }, [habit]);
 
   const formatCompletionDates = (dates: string[]) => {
@@ -51,12 +62,11 @@ const ProgressScreen = () => {
 
     dates.forEach((date) => {
       const formattedDate = new Date(date).toISOString().split("T")[0];
-      formatted[formattedDate] = { selected: true, selectedColor: "#90EE90" }; // Light green for completed dates
+      formatted[formattedDate] = { selected: true, selectedColor: "#90EE90" };
     });
 
-    // Highlight today if not completed
     if (!formatted[todayFormatted]) {
-      formatted[todayFormatted] = { selected: true, selectedColor: "#ADD8E6" }; // Light blue for today
+      formatted[todayFormatted] = { selected: true, selectedColor: "#ADD8E6" };
     }
 
     return formatted;
@@ -86,10 +96,10 @@ const ProgressScreen = () => {
       <Calendar
         current={currentMonth.toISOString().split("T")[0]}
         markedDates={markedDates}
-        maxDate={maxDate} // Grey out future days
-        disableArrowRight={isCurrentMonth} // Prevent navigation to future months
+        maxDate={maxDate}
+        disableArrowRight={isCurrentMonth}
         theme={{
-          today: "#ADD8E6", // Light blue for today
+          today: "#ADD8E6",
           todayTextColor: "red",
           arrowColor: "black",
         }}
@@ -98,37 +108,81 @@ const ProgressScreen = () => {
         }}
       />
 
+      {/* Habit Statistics Section */}
       <Text style={styles.calendarTitle}>Habit Statistics</Text>
-
-      {/* Stats Section */}
-      <View style={styles.statCard}>
-        <Text style={styles.statLabel}>Current Streak:</Text>
-        <Text style={styles.statValue}>{currentStreak} days</Text>
+      <View style={styles.row}>
+        <View style={[styles.statCard, styles.smallCard]}>
+          <Text style={styles.statLabel}>Current Streak</Text>
+          <Text style={styles.statValue}>{currentStreak} days</Text>
+        </View>
+        <View style={[styles.statCard, styles.smallCard]}>
+          <Text style={styles.statLabel}>Best Streak</Text>
+          <Text style={styles.statValue}>{bestStreak} days</Text>
+        </View>
       </View>
 
-      <View style={styles.statCard}>
-        <Text style={styles.statLabel}>Best Streak:</Text>
-        <Text style={styles.statValue}>{bestStreak} days</Text>
+      <View style={styles.row}>
+        <View style={styles.circularStatCard}>
+          <Progress.Circle
+            size={100}
+            progress={weeklyCompletionRate / 100}
+            color="#76c7c0"
+            unfilledColor="#e8f5e9"
+            borderWidth={0}
+            showsText={true}
+            formatText={() => `${weeklyCompletionRate}%`}
+            textStyle={{ fontSize: 16, color: "#333" }}
+          />
+          <Text style={styles.statLabel}>Weekly Completion</Text>
+        </View>
+        <View style={styles.circularStatCard}>
+          <Progress.Circle
+            size={100}
+            progress={monthlyCompletionRate / 100}
+            color="#4caf50"
+            unfilledColor="#e8f5e9"
+            borderWidth={0}
+            showsText={true}
+            formatText={() => `${monthlyCompletionRate}%`}
+            textStyle={{ fontSize: 16, color: "#333" }}
+          />
+          <Text style={styles.statLabel}>Monthly Completion</Text>
+        </View>
       </View>
 
-      <View style={styles.statCard}>
-        <Text style={styles.statLabel}>Weekly Completion Rate:</Text>
-        <Text style={styles.statValue}>{weeklyCompletionRate}%</Text>
-      </View>
-
-      <View style={styles.statCard}>
-        <Text style={styles.statLabel}>Monthly Completion Rate:</Text>
-        <Text style={styles.statValue}>{monthlyCompletionRate}%</Text>
-      </View>
-
-      <View style={styles.statCard}>
-        <Text style={styles.statLabel}>Weekly Consistency:</Text>
-        <Text style={styles.statValue}>{weeklyConsistency} weeks</Text>
-      </View>
-
-      <View style={styles.statCard}>
-        <Text style={styles.statLabel}>Monthly Consistency:</Text>
-        <Text style={styles.statValue}>{monthlyConsistency} months</Text>
+      {/* Bar Chart for Monthly Completions history */}
+      <View style={styles.barChartContainer}>
+        <Text style={styles.statLabel}>Completion History</Text>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <YAxis
+            data={monthlyCompletions}
+            contentInset={{ top: 10, bottom: 10 }}
+            svg={{
+              fontSize: 12,
+              fill: "#666",
+            }}
+            numberOfTicks={5}
+            style={{ marginRight: 8 }}
+          />
+          <BarChart
+            style={styles.barChart}
+            data={monthlyCompletions}
+            svg={{ fill: "#4caf50" }}
+            contentInset={{ top: 10, bottom: 10 }}
+            spacingInner={0.3}
+          >
+            <Grid />
+          </BarChart>
+        </View>
+        <View style={styles.barChartLabels}>
+          {["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].map(
+            (month, index) => (
+              <Text key={index} style={styles.barChartLabel}>
+                {month}
+              </Text>
+            )
+          )}
+        </View>
       </View>
     </ScrollView>
   );
@@ -147,32 +201,72 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20,
   },
-  statCard: {
-    backgroundColor: "#fff",
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 8,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  statLabel: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  statValue: {
-    fontSize: 16,
-    color: "#666",
-    marginTop: 8,
-  },
   calendarTitle: {
     fontSize: 20,
     fontWeight: "bold",
     color: "#333",
     textAlign: "center",
     marginVertical: 16,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 16,
+  },
+  statCard: {
+    backgroundColor: "#fff",
+    padding: 16,
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    marginBottom: 12,
+  },
+  smallCard: {
+    flex: 1,
+    marginHorizontal: 4,
+  },
+  statLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+    textAlign: "center",
+  },
+  statValue: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#4caf50",
+    textAlign: "center",
+    marginTop: 8,
+  },
+  circularStatCard: {
+    alignItems: "center",
+    flex: 1,
+    marginHorizontal: 4,
+  },
+  barChartContainer: {
+    marginTop: 16,
+    padding: 16,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  barChart: {
+    height: 200,
+    flex: 1,
+    marginBottom: 16,
+  },
+  barChartLabels: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  barChartLabel: {
+    fontSize: 12,
+    color: "#666",
   },
 });
 
