@@ -1,6 +1,7 @@
 import React from 'react';
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { ThemeProvider, useTheme } from "./src/context/themeContext";
 
 import HomeScreen from './screens/HomeScreen';
 import AddHabitScreen from './screens/AddHabitScreen';
@@ -8,33 +9,30 @@ import HabitListScreen from './screens/HabitListScreen';
 import EditHabitScreen from './screens/EditHabitScreen';
 import ProgressScreen from './screens/ProgressScreen';
 import ReportScreen from "./screens/ReportScreen";
+import SettingsScreen from "./screens/SettingsScreen";
+import PrivacyPolicy from "./screens/PrivacyPolicyScreen"
 const Stack = createStackNavigator();
-
-// Custom Light Theme for Navigation
-const AppTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: '#f8f9fa', // Light gray background
-    primary: '#0288d1',    // Accent color for navigation
-  },
-};
 
 export default function App() {
   return (
-    <NavigationContainer theme={AppTheme}>
+    <ThemeProvider>
+      <AppWithTheme />
+    </ThemeProvider>
+  );
+}
+
+function AppWithTheme() {
+  const { theme } = useTheme();
+
+  return (
+    <NavigationContainer theme={theme}>
       <Stack.Navigator
         initialRouteName="Home"
         screenOptions={{
-          headerStyle: {
-            backgroundColor: '#0288d1', // Header background color
-          },
-          headerTintColor: '#fff', // Header text color
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            fontSize: 20,
-          },
-          cardStyle: { backgroundColor: '#f8f9fa' }, // Screen background
+          headerStyle: { backgroundColor: theme.colors.primary },
+          headerTintColor: theme.colors.text,
+          headerTitleStyle: { fontWeight: "bold", fontSize: 20 },
+          cardStyle: { backgroundColor: theme.colors.background },
         }}
       >
         <Stack.Screen
@@ -66,6 +64,16 @@ export default function App() {
           name="ReportScreen"
           component={ReportScreen}
           options={{ title: 'Monthly Report' }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{ title: 'Settings' }}
+        />
+        <Stack.Screen
+          name="PrivacyPolicy"
+          component={PrivacyPolicy}
+          options={{ title: 'Privacy Policy' }}
         />
 
       </Stack.Navigator>

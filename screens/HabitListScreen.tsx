@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { getHabits, deleteHabit, updateHabit } from '../database/habits';
+import { useTheme } from "../src/context/themeContext";
 
 const HabitListScreen = () => {
   const [habits, setHabits] = useState([]);
@@ -16,6 +17,7 @@ const HabitListScreen = () => {
   const [notification, setNotification] = useState({ message: '', type: '' });
   const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
+  const { theme } = useTheme();
 
   // Fetch habits from AsyncStorage
   useFocusEffect(
@@ -100,20 +102,27 @@ const HabitListScreen = () => {
 
   const renderHabit = ({ item }) => (
     <TouchableOpacity
-      style={styles.habitCard}
+      style={[
+        styles.habitCard,
+        { backgroundColor: theme.colors.card },
+      ]}
       onPress={() => {
         setSelectedHabit(item);
         setModalVisible(true);
       }}
     >
-      <Text style={styles.habitName}>{item.name}</Text>
-      <Text style={styles.habitDetails}>Frequency: {item.frequency}</Text>
-      <Text style={styles.habitDetails}>Streak: {item.currentStreak} days</Text>
+      <Text style={[styles.habitName, { color: theme.colors.text }]}>{item.name}</Text>
+      <Text style={[styles.habitDetails, { color: theme.colors.text }]}>
+        Frequency: {item.frequency}
+      </Text>
+      <Text style={[styles.habitDetails, { color: theme.colors.text }]}>
+        Streak: {item.currentStreak} days
+      </Text>
     </TouchableOpacity>
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       {/* Notification Message */}
       {notification.message ? (
         <Text
@@ -152,9 +161,11 @@ const HabitListScreen = () => {
           onRequestClose={() => setModalVisible(false)}
         >
           <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>{selectedHabit.name}</Text>
-              <Text style={styles.modalMessage}>
+            <View style={[styles.modalContent, { backgroundColor: theme.colors.card }]}>
+              <Text style={[styles.modalTitle, { color: theme.colors.text }]}>
+                {selectedHabit.name}
+              </Text>
+              <Text style={[styles.modalMessage, { color: theme.colors.text }]}>
                 What would you like to do?
               </Text>
 
@@ -231,7 +242,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffebee',
   },
   habitCard: {
-    backgroundColor: '#fff',
     padding: 16,
     marginBottom: 12,
     borderRadius: 8,
@@ -243,22 +253,18 @@ const styles = StyleSheet.create({
   habitName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 8,
   },
   habitDetails: {
     fontSize: 16,
-    color: '#666',
   },
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     width: '80%',
-    backgroundColor: '#fff',
     borderRadius: 10,
     padding: 20,
     alignItems: 'center',
@@ -268,7 +274,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#333',
   },
   modalMessage: {
     fontSize: 16,

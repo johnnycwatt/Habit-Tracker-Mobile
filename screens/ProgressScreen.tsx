@@ -13,10 +13,12 @@ import {
   calculateWeeklyConsistency,
   calculateMonthlyConsistency,
 } from "../src/utils/habitStats";
+import { useTheme } from "../src/context/themeContext";
 
 const ProgressScreen = () => {
   const route = useRoute<RouteProp<{ params: { habit: Habit } }, "params">>();
   const { habit } = route.params;
+  const { theme } = useTheme();
 
   const [currentStreak, setCurrentStreak] = useState(0);
   const [bestStreak, setBestStreak] = useState(0);
@@ -88,36 +90,56 @@ const ProgressScreen = () => {
     currentMonth.getMonth() === today.getMonth();
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>{habit.name}</Text>
+    <ScrollView
+      contentContainerStyle={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      <Text style={[styles.title, { color: theme.colors.text }]}>{habit.name}</Text>
 
       {/* Calendar Section */}
-      <Text style={styles.calendarTitle}>Completions</Text>
+      <Text style={[styles.calendarTitle, { color: theme.colors.text }]}>Completions</Text>
       <Calendar
         current={currentMonth.toISOString().split("T")[0]}
         markedDates={markedDates}
         maxDate={maxDate}
         disableArrowRight={isCurrentMonth}
         theme={{
-          today: "#ADD8E6",
-          todayTextColor: "red",
-          arrowColor: "black",
+          backgroundColor: theme.colors.background,
+          calendarBackground: theme.colors.background,
+          textSectionTitleColor: theme.colors.text,
+          selectedDayBackgroundColor: theme.colors.primary,
+          selectedDayTextColor: theme.colors.card,
+          todayTextColor: theme.colors.primary,
+          dayTextColor: theme.colors.text,
+          textDisabledColor: theme.colors.calendarDisabledText,
+          dotColor: theme.colors.primary,
+          selectedDotColor: theme.colors.card,
+          arrowColor: theme.colors.text,
+          monthTextColor: theme.colors.text,
+          textDayFontWeight: "500",
+          textMonthFontWeight: "bold",
+          textDayHeaderFontWeight: "bold",
+          textDayFontSize: 14,
+          textMonthFontSize: 16,
+          textDayHeaderFontSize: 14,
         }}
         onMonthChange={(month) => {
           setCurrentMonth(new Date(month.year, month.month - 1));
         }}
       />
 
+
       {/* Habit Statistics Section */}
-      <Text style={styles.calendarTitle}>Habit Statistics</Text>
+      <Text style={[styles.calendarTitle, { color: theme.colors.text }]}>Habit Statistics</Text>
       <View style={styles.row}>
-        <View style={[styles.statCard, styles.smallCard]}>
-          <Text style={styles.statLabel}>Current Streak</Text>
-          <Text style={styles.statValue}>{currentStreak} days</Text>
+        <View style={[styles.statCard, styles.smallCard, { backgroundColor: theme.colors.card }]}>
+          <Text style={[styles.statLabel, { color: theme.colors.text }]}>Current Streak</Text>
+          <Text style={[styles.statValue]}>
+            {currentStreak} days
+          </Text>
         </View>
-        <View style={[styles.statCard, styles.smallCard]}>
-          <Text style={styles.statLabel}>Best Streak</Text>
-          <Text style={styles.statValue}>{bestStreak} days</Text>
+        <View style={[styles.statCard, styles.smallCard, { backgroundColor: theme.colors.card }]}>
+          <Text style={[styles.statLabel, { color: theme.colors.text }]}>Best Streak</Text>
+          <Text style={[styles.statValue]}>{bestStreak} days</Text>
         </View>
       </View>
 
@@ -131,9 +153,9 @@ const ProgressScreen = () => {
             borderWidth={0}
             showsText={true}
             formatText={() => `${weeklyCompletionRate}%`}
-            textStyle={{ fontSize: 16, color: "#333" }}
+            textStyle={{ fontSize: 16, color: theme.colors.text }}
           />
-          <Text style={styles.statLabel}>Weekly Completion</Text>
+          <Text style={[styles.statLabel, { color: theme.colors.text }]}>Weekly Completion</Text>
         </View>
         <View style={styles.circularStatCard}>
           <Progress.Circle
@@ -144,23 +166,20 @@ const ProgressScreen = () => {
             borderWidth={0}
             showsText={true}
             formatText={() => `${monthlyCompletionRate}%`}
-            textStyle={{ fontSize: 16, color: "#333" }}
+            textStyle={{ fontSize: 16, color: theme.colors.text }}
           />
-          <Text style={styles.statLabel}>Monthly Completion</Text>
+          <Text style={[styles.statLabel, { color: theme.colors.text }]}>Monthly Completion</Text>
         </View>
       </View>
 
       {/* Bar Chart for Monthly Completions history */}
-      <View style={styles.barChartContainer}>
-        <Text style={styles.statLabel}>Completion History</Text>
+      <View style={[styles.barChartContainer, { backgroundColor: theme.colors.card }]}>
+        <Text style={[styles.statLabel, { color: theme.colors.text }]}>Completion History</Text>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <YAxis
             data={monthlyCompletions}
             contentInset={{ top: 10, bottom: 10 }}
-            svg={{
-              fontSize: 12,
-              fill: "#666",
-            }}
+            svg={{ fontSize: 12, fill: theme.colors.text }}
             numberOfTicks={5}
             style={{ marginRight: 8 }}
           />
@@ -171,13 +190,13 @@ const ProgressScreen = () => {
             contentInset={{ top: 10, bottom: 10 }}
             spacingInner={0.3}
           >
-            <Grid />
+            <Grid svg={{ stroke: theme.colors.text }} />
           </BarChart>
         </View>
         <View style={styles.barChartLabels}>
           {["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].map(
             (month, index) => (
-              <Text key={index} style={styles.barChartLabel}>
+              <Text key={index} style={[styles.barChartLabel, { color: theme.colors.text }]}>
                 {month}
               </Text>
             )
@@ -192,19 +211,16 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 16,
-    backgroundColor: "#f8f9fa",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#333",
     textAlign: "center",
     marginBottom: 20,
   },
   calendarTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#333",
     textAlign: "center",
     marginVertical: 16,
   },
@@ -214,7 +230,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   statCard: {
-    backgroundColor: "#fff",
     padding: 16,
     borderRadius: 8,
     shadowColor: "#000",
@@ -230,7 +245,6 @@ const styles = StyleSheet.create({
   statLabel: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#333",
     textAlign: "center",
   },
   statValue: {
@@ -248,7 +262,6 @@ const styles = StyleSheet.create({
   barChartContainer: {
     marginTop: 16,
     padding: 16,
-    backgroundColor: "#fff",
     borderRadius: 8,
     shadowColor: "#000",
     shadowOpacity: 0.1,
@@ -266,7 +279,6 @@ const styles = StyleSheet.create({
   },
   barChartLabel: {
     fontSize: 12,
-    color: "#666",
   },
 });
 

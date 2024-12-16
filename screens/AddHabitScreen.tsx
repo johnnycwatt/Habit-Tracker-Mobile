@@ -12,8 +12,10 @@ import { useNavigation } from '@react-navigation/native';
 import RNPickerSelect from 'react-native-picker-select';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { addHabit } from '../database/habits';
+import { useTheme } from "../src/context/themeContext";
 
 const AddHabitScreen = () => {
+  const {theme} = useTheme();
   const [name, setName] = useState('');
   const [frequency, setFrequency] = useState('Daily');
   const [startDate, setStartDate] = useState(new Date());
@@ -50,10 +52,10 @@ const AddHabitScreen = () => {
 
     const newHabit = {
       name,
-      startDate: startDate.toISOString().split('T')[0], //YYYY-MM-DD
+      startDate: startDate.toISOString().split("T")[0], //YYYY-MM-DD
       frequency,
-      customDays: frequency === 'Custom' ? selectedCustomDays : null,
-      color: '#ffffff',
+      customDays: frequency === "Custom" ? selectedCustomDays : null,
+      color: theme.colors.card,
     };
 
     try {
@@ -69,7 +71,12 @@ const AddHabitScreen = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView
+      contentContainerStyle={[
+        styles.container,
+        { backgroundColor: theme.colors.background },
+      ]}
+    >
       {/* Notification Message */}
       {notification.message ? (
         <Text
@@ -84,34 +91,49 @@ const AddHabitScreen = () => {
 
       {/* Habit Name */}
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            backgroundColor: theme.colors.card,
+            borderColor: theme.colors.primary,
+            color: theme.colors.text,
+          },
+        ]}
         placeholder="Habit Name"
+        placeholderTextColor={theme.colors.text}
         value={name}
         onChangeText={setName}
       />
 
       {/* Frequency Picker */}
-      <View style={styles.pickerContainer}>
+      <View
+        style={[
+          styles.pickerContainer,
+          { backgroundColor: theme.colors.card, borderColor: theme.colors.primary },
+        ]}
+      >
         <RNPickerSelect
           onValueChange={(value) => setFrequency(value)}
           items={[
-            { label: 'Daily', value: 'Daily' },
-            { label: 'Weekly', value: 'Weekly' },
-            { label: 'Monthly', value: 'Monthly' },
-            { label: 'Custom', value: 'Custom' },
+            { label: "Daily", value: "Daily" },
+            { label: "Weekly", value: "Weekly" },
+            { label: "Monthly", value: "Monthly" },
+            { label: "Custom", value: "Custom" },
           ]}
           value={frequency}
           style={{
-            inputIOS: styles.pickerText,
-            inputAndroid: styles.pickerText,
+            inputIOS: [styles.pickerText, { color: theme.colors.text }],
+            inputAndroid: [styles.pickerText, { color: theme.colors.text }],
           }}
         />
       </View>
 
       {/* Custom Days Selector */}
-      {frequency === 'Custom' && (
+      {frequency === "Custom" && (
         <View style={styles.customDaysContainer}>
-          <Text style={styles.label}>Select Custom Days:</Text>
+          <Text style={[styles.label, { color: theme.colors.text }]}>
+            Select Custom Days:
+          </Text>
           {Object.keys(customDays).map((day) => (
             <View key={day} style={styles.customDay}>
               <Switch
@@ -119,24 +141,39 @@ const AddHabitScreen = () => {
                 onValueChange={(newValue) =>
                   setCustomDays({ ...customDays, [day]: newValue })
                 }
-                trackColor={{ false: '#ccc', true: '#0288d1' }} // Customize colors
-                thumbColor={customDays[day] ? '#ffffff' : '#f4f3f4'}
+                trackColor={{
+                  false: theme.colors.card,
+                  true: theme.colors.primary,
+                }}
+                thumbColor={customDays[day] ? theme.colors.card : "#f4f3f4"}
               />
-              <Text style={styles.customDayText}>{day}</Text>
+              <Text style={[styles.customDayText, { color: theme.colors.text }]}>
+                {day}
+              </Text>
             </View>
           ))}
         </View>
       )}
 
       {/* Start Date Selector */}
-      <Text style={styles.label}>Start Date:</Text>
+      <Text style={[styles.label, { color: theme.colors.text }]}>
+        Start Date:
+      </Text>
       <TouchableOpacity
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            backgroundColor: theme.colors.card,
+            borderColor: theme.colors.primary,
+          },
+        ]}
         onPress={() => setShowDatePicker(true)}
       >
-        <Text>{startDate.toDateString()}</Text>
+        <Text style={{ color: theme.colors.text }}>
+          {startDate.toDateString()}
+        </Text>
       </TouchableOpacity>
-      {showDatePicker &&(
+      {showDatePicker && (
         <DateTimePicker
           value={startDate}
           mode="date"
@@ -162,15 +199,47 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 16,
-    backgroundColor: '#f8f9fa',
   },
   notification: {
     fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 16,
     padding: 8,
     borderRadius: 8,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  input: {
+    borderWidth: 1,
+    padding: 12,
+    marginBottom: 16,
+    borderRadius: 8,
+    fontSize: 16,
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+  },
+  pickerText: {
+    fontSize: 16,
+  },
+  customDaysContainer: {
+    marginBottom: 16,
+  },
+  customDay: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  customDayText: {
+    marginLeft: 8,
+    fontSize: 16,
   },
   success: {
     color: '#2e7d32',
@@ -179,46 +248,6 @@ const styles = StyleSheet.create({
   error: {
     color: '#d32f2f',
     backgroundColor: '#ffebee',
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 12,
-    marginBottom: 16,
-    borderRadius: 8,
-    backgroundColor: '#fff',
-    fontSize: 16,
-  },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    backgroundColor: '#fff',
-    padding: 12,
-    marginBottom: 16,
-  },
-  pickerText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  customDaysContainer: {
-    marginBottom: 16,
-  },
-  customDay: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  customDayText: {
-    marginLeft: 8,
-    fontSize: 16,
-    color: '#333',
   },
   addButton: {
     backgroundColor: '#e0f7fa',

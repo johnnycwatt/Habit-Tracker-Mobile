@@ -8,9 +8,11 @@ import {
   calculateMonthlyConsistency,
 } from "../src/utils/habitStats";
 import { getHabits } from "../database/habits";
+import { useTheme } from "../src/context/themeContext";
 
 const ReportScreen = () => {
   const [habits, setHabits] = useState([]);
+  const { theme } = useTheme();
   const [reportData, setReportData] = useState({
     Daily: [],
     Weekly: [],
@@ -101,7 +103,9 @@ const ReportScreen = () => {
 
   const renderHabitSection = (habits, title) => (
     <View key={title}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+        {title}
+      </Text>
       {habits.length > 0 ? (
         habits.map((habit, index) => (
           <View
@@ -127,29 +131,41 @@ const ReportScreen = () => {
           </View>
         ))
       ) : (
-        <Text style={styles.noData}>No habits in this category.</Text>
+        <Text style={[styles.noData, { color: theme.colors.text }]}>
+          No habits in this category.
+        </Text>
       )}
     </View>
   );
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Summary</Text>
-      <View style={styles.summaryContainer}>
-        <Text style={styles.summaryText}>
+    <ScrollView
+      contentContainerStyle={[
+        styles.container,
+        { backgroundColor: theme.colors.background },
+      ]}
+    >
+      <Text style={[styles.title, { color: theme.colors.text }]}>Summary</Text>
+      <View
+        style={[
+          styles.summaryContainer,
+          { backgroundColor: theme.colors.card },
+        ]}
+      >
+        <Text style={[styles.summaryText, { color: theme.colors.text }]}>
           <Text style={styles.summaryLabel}>Best Habit:</Text>{" "}
           {summary.bestHabit?.name || "N/A"} (
           {summary.bestHabit?.monthlyCompletionRate || 0}%)
         </Text>
-        <Text style={styles.summaryText}>
+        <Text style={[styles.summaryText, { color: theme.colors.text }]}>
           <Text style={styles.summaryLabel}>Total Habits:</Text>{" "}
           {summary.totalHabits}
         </Text>
-        <Text style={styles.summaryText}>
+        <Text style={[styles.summaryText, { color: theme.colors.text }]}>
           <Text style={styles.summaryLabel}>Average Completion:</Text>{" "}
           {summary.averageCompletion.toFixed(1)}%
         </Text>
-        <Text style={styles.summaryText}>
+        <Text style={[styles.summaryText, { color: theme.colors.text }]}>
           <Text style={styles.summaryLabel}>Frequently Missed:</Text>{" "}
           {summary.frequentlyMissed
             .map((habit) => `${habit.name} (${habit.monthlyCompletionRate}%)`)
@@ -157,7 +173,9 @@ const ReportScreen = () => {
         </Text>
       </View>
 
-      <Text style={styles.title}>Habit Report</Text>
+      <Text style={[styles.title, { color: theme.colors.text }]}>
+        Habit Report
+      </Text>
       <View style={styles.dropdownContainer}>
         <Picker
           selectedValue={filter}
@@ -182,12 +200,10 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 16,
-    backgroundColor: "#f8f9fa",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#333",
     textAlign: "center",
     marginBottom: 10,
   },
