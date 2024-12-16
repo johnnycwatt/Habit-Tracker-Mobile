@@ -1,11 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { useTheme } from "../src/context/themeContext";
 import { useNavigation } from "@react-navigation/native";
+import { exportToCSV, importFromCSV } from "../src/utils/csvManager";
 
 const SettingsScreen = () => {
   const { toggleTheme, theme } = useTheme();
   const navigation = useNavigation();
+  const [notification, setNotification] = useState({ message: "", type: "" });
+
+  const handleToggleTheme = () => {
+    toggleTheme();
+    setNotification({
+      message: theme.colors.background === "#f8f9fa" ? "Dark Mode Enabled" : "Dark Mode Disabled",
+      type: "success",
+    });
+    setTimeout(() => setNotification({ message: "", type: "" }), 3000);
+  };
+
+  const handleExport = async () => {
+    const result = await exportToCSV();
+    setNotification({
+      message: result.message,
+      type: result.success ? "success" : "error",
+    });
+    setTimeout(() => setNotification({ message: "", type: "" }), 3000);
+  };
 
   return (
     <ScrollView
@@ -19,7 +39,7 @@ const SettingsScreen = () => {
       {/* Toggle Dark Mode */}
       <TouchableOpacity
         style={[styles.settingOption, { backgroundColor: theme.colors.card }]}
-        onPress={toggleTheme}
+        onPress={handleToggleTheme}
       >
         <Text style={[styles.optionText, { color: theme.colors.text }]}>
           {theme.colors.background === "#f8f9fa"
@@ -45,16 +65,15 @@ const SettingsScreen = () => {
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.settingOption, { backgroundColor: theme.colors.card }]}
+        onPress={handleExport}
       >
-        <Text style={[styles.optionText, { color: theme.colors.text }]}>
-          Backup Data
-        </Text>
+        <Text style={[styles.optionText, { color: theme.colors.text }]}>Export to CSV</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.settingOption, { backgroundColor: theme.colors.card }]}
       >
         <Text style={[styles.optionText, { color: theme.colors.text }]}>
-          Restore Data
+          Help and FAQs
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
@@ -65,6 +84,18 @@ const SettingsScreen = () => {
           Privacy Policy
         </Text>
       </TouchableOpacity>
+
+      {/* Notification Message */}
+      {notification.message ? (
+        <Text
+          style={[
+            styles.notification,
+            notification.type === "success" ? styles.success : styles.error,
+          ]}
+        >
+          {notification.message}
+        </Text>
+      ) : null}
     </ScrollView>
   );
 };
@@ -79,6 +110,22 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 20,
+  },
+  notification: {
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 16,
+    padding: 8,
+    borderRadius: 8,
+  },
+  success: {
+    color: "#2e7d32",
+    backgroundColor: "#e8f5e9",
+  },
+  error: {
+    color: "#d32f2f",
+    backgroundColor: "#ffebee",
   },
   settingOption: {
     padding: 16,

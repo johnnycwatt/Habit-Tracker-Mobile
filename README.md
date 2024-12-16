@@ -22,8 +22,7 @@ This is the mobile version of the Habit Tracker application, built using React N
     - Average completion rate.
     - Frequently missed habits.
   - Filter options to view habits by frequency (Daily, Weekly, Monthly, Custom).
-- Navigation between `HomeScreen`, `AddHabitScreen`, `EditHabitScreen`, `HabitListScreen`, `ProgressScreen`, and `ReportScreen`.
-- CRUD operations using AsyncStorage for habit storage.
+- Total Control of your Data: the ability to export habits data to CSV files for further analysis or to move to another service
 
 ## Gallery
 
