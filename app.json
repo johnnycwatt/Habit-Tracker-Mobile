@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "HabitTrackerMobile",
-    "slug": "HabitTrackerMobile",
+    "name": "Habit Tracker - Plan, Succeed",
+    "slug": "habit-tracker-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/habitTrackerIcon.png",
@@ -26,7 +26,7 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-sqlite"
+
     ],
     "extra": {
       "eas": {

@@ -3,25 +3,33 @@ title: "Privacy Policy"
 layout: default
 ---
 
-Last updated: 15/12/2024
+## Privacy Policy
 
-Habit Tracker ("we", "our", or "us") operates the Habit Tracker mobile application (the "App"). This Privacy Policy explains our policies regarding the collection, use, and disclosure of personal data when you use our App.
+Last updated: 17/12/2024
+
+Habit Tracker - Plan, Succeed (“we,” “our,” or “us”) operates the Habit Tracker mobile application (the “App”). This Privacy Policy explains our policies regarding the collection, use, and storage of data when you use our App.
 
 ## Information We Do Not Collect
-We do not collect any personal or sensitive user data.
+We do **not collect, store, or process** any personal or sensitive user data. All data entered into the App remains on your device.
 
 ## Data Sharing
-We do not share any data with third parties.
+We do not share your data with any third parties. The App does not use any third-party tracking, analytics libraries (e.g., Google Analytics), or advertising services.
 
 ## Data Storage
-The App stores all habit tracking data locally on your device. This data is not uploaded to any server and we do not have access to your data.
+- Your habit tracking data is stored locally on your device.
+- This data is not uploaded to any server, cloud service, or external storage.
+- We, as the developers, do not have access to your data.
+
+**Deleting Your Data**: You can delete all app data at any time by uninstalling the App from your device.
+
 
 ## Third-Party Services
-The App may use third-party libraries to improve functionality. These libraries do not access or process your personal data.
+While the App uses certain open-source libraries (such as for UI components and navigation), these libraries operate locally on your device and do not track, collect, or share your data externally.
+
 
 ## Changes to This Privacy Policy
-We may update this Privacy Policy from time to time. You are advised to review this page periodically for any changes.
+We may update this Privacy Policy periodically. Changes will be communicated through app updates.
 
 ## Contact Us
-If you have any questions about this Privacy Policy, you can contact us:
+If you have any questions about this Privacy Policy, please contact us:
 - **Email**: johnnycwatt@gmail.com

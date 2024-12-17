@@ -54,7 +54,6 @@ Below are screenshots showcasing the current status of the Habit Tracker Mobile 
    Ensure the following dependencies are installed to run with **Expo**:
   - `expo`
   - `@react-native-async-storage/async-storage`
-  - `react-native-picker-select`
   - `@react-native-community/datetimepicker`
 
    If any dependencies are missing, install them using `npm install <dependency-name>`.
