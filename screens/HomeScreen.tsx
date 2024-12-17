@@ -3,47 +3,21 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, FlatList } from "react
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { getHabits } from "../database/habits";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useTheme } from "../src/context/themeContext"; // Import theme context
+import { useTheme } from "../src/context/themeContext";
+import { isHabitDueToday } from "../src/utils/habitScheduler";
 
 const HomeScreen = () => {
   const [habitsDueToday, setHabitsDueToday] = useState([]);
   const navigation = useNavigation();
-  const { theme } = useTheme(); // Access theme from context
+  const { theme } = useTheme();
 
   const fetchHabitsDueToday = async () => {
     const allHabits = await getHabits();
-    const today = new Date();
-    const dayOfWeek = today.toLocaleDateString("en-US", { weekday: "long" });
-    const dayOfMonth = today.getDate();
-    const todayDate = today.toISOString().split("T")[0]; // YYYY-MM-DD
-
     const dueToday = allHabits.map((habit) => {
-      const habitStartDate = new Date(habit.startDate);
-      const habitDayOfWeek = habitStartDate.toLocaleDateString("en-US", { weekday: "long" });
-      const habitDayOfMonth = habitStartDate.getDate();
-
-      let isDueToday = false;
-      switch (habit.frequency) {
-        case "Daily":
-          isDueToday = true;
-          break;
-        case "Weekly":
-          isDueToday = habitDayOfWeek === dayOfWeek;
-          break;
-        case "Monthly":
-          isDueToday = habitDayOfMonth === dayOfMonth;
-          break;
-        case "Custom":
-          isDueToday = habit.customDays?.includes(dayOfWeek);
-          break;
-        default:
-          isDueToday = false;
-      }
-      if (habitStartDate > today) return false;
-      const isCompleted = habit.completionDates?.includes(todayDate);
-
+      const { isDueToday, isCompleted } = isHabitDueToday(habit);
       return { ...habit, isDueToday, isCompleted };
     });
+
     setHabitsDueToday(dueToday.filter((habit) => habit.isDueToday));
   };
 

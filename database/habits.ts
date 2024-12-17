@@ -81,3 +81,17 @@ export const deleteHabit = async (habitName) => {
     console.error('Error deleting habit:', error);
   }
 };
+
+// Add/update a habit's reminder status
+export const updateHabitReminder = async (habitName: string, reminderEnabled: boolean) => {
+  try {
+    const habits = JSON.parse(await AsyncStorage.getItem("habits")) || [];
+    const updatedHabits = habits.map((habit) =>
+      habit.name === habitName ? { ...habit, reminderEnabled } : habit
+    );
+    await AsyncStorage.setItem("habits", JSON.stringify(updatedHabits));
+    console.log(`Reminder status updated for ${habitName}: ${reminderEnabled}`);
+  } catch (error) {
+    console.error("Error updating habit reminder:", error);
+  }
+};

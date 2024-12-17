@@ -5,8 +5,6 @@ layout: default
 
 # Habit Tracker Mobile Documentation
 
-![Habit Tracker Logo](habitTrackerIcon.png)
-
 This app is designed to help you build and maintain habits effectively while tracking your progress with detailed statistics and visualizations.
 
 ---

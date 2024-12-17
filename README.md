@@ -23,6 +23,7 @@ This is the mobile version of the Habit Tracker application, built using React N
     - Frequently missed habits.
   - Filter options to view habits by frequency (Daily, Weekly, Monthly, Custom).
 - Total Control of your Data: the ability to export habits data to CSV files for further analysis or to move to another service
+- Reminders to improve consistency. Push notifications can be sent out when habits are due as a reminder. This can be managed for each individual habit in the Settings page.
 
 ## Gallery
 

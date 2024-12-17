@@ -72,6 +72,23 @@ In the **Monthly Report**, your habits are color-coded based on their completion
 
 ---
 
+### How do I Set Reminders for my Habits?
+Reminders can be a great way to improve consistency with your habits. To set up Habit Reminders:
+1. **Open the Settings Page**: Navigate to the **Settings** screen by tapping the gear icon on the top-right corner of the Home screen.
+2. Manage Reminders: Tap on "**Reminders**" to open the Reminder Settings view.
+3. **Enable Reminders:** You will see a list of your habits. You can use the toggle switch next to each habit to enable/disable reminders
+
+Once reminders are enabled, the app will automatically schedule notifications for your habits based on their frequency:
+
+- **Daily Habits**: Notifications are triggered every day
+- **Weekly Habits**:Notifications appear only on the specific day of the week the habit is due (e.g Tuesday).
+- **Monthly Habits**: Notifications are sent on the specific day of the month the habit is scheduled (e.g the 16th).
+- **Custom Habits**: Notifications will be sent out only on the specific days (e.g Tuesday, Thursday)
+
+**Important**: Notifications do need to be enabled for the app to deliver the reminders successfully. You can enable/disable reminders for habits at any time.
+
+---
+
 ## Data Management
 
 ### How can I export my data as a CSV file?

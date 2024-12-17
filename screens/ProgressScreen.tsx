@@ -4,7 +4,7 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import { Habit } from "../database/habit";
 import { Calendar } from "react-native-calendars";
 import * as Progress from "react-native-progress";
-import { BarChart, Grid, YAxis } from "react-native-svg-charts";
+import CustomBarChart from "../src/utils/CustomBarChart";
 import {
   calculateCurrentStreak,
   calculateBestStreak,
@@ -83,6 +83,14 @@ const ProgressScreen = () => {
   });
 
   const markedDates = formatCompletionDates(filteredCompletionDates);
+
+    const monthLabels = [
+      "Jan", "Feb", "Mar",
+      "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep",
+      "Oct", "Nov", "Dec",
+    ];
+
 
   const maxDate = today.toISOString().split("T")[0];
   const isCurrentMonth =
@@ -173,36 +181,13 @@ const ProgressScreen = () => {
       </View>
 
       {/* Bar Chart for Monthly Completions history */}
-      <View style={[styles.barChartContainer, { backgroundColor: theme.colors.card }]}>
-        <Text style={[styles.statLabel, { color: theme.colors.text }]}>Completion History</Text>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <YAxis
-            data={monthlyCompletions}
-            contentInset={{ top: 10, bottom: 10 }}
-            svg={{ fontSize: 12, fill: theme.colors.text }}
-            numberOfTicks={5}
-            style={{ marginRight: 8 }}
-          />
-          <BarChart
-            style={styles.barChart}
-            data={monthlyCompletions}
-            svg={{ fill: "#4caf50" }}
-            contentInset={{ top: 10, bottom: 10 }}
-            spacingInner={0.3}
-          >
-            <Grid svg={{ stroke: theme.colors.text }} />
-          </BarChart>
-        </View>
-        <View style={styles.barChartLabels}>
-          {["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].map(
-            (month, index) => (
-              <Text key={index} style={[styles.barChartLabel, { color: theme.colors.text }]}>
-                {month}
-              </Text>
-            )
-          )}
-        </View>
-      </View>
+      <Text style={[styles.calendarTitle, { color: theme.colors.text }]}>
+       Completion History
+      </Text>
+      <CustomBarChart
+        data={monthlyCompletions}
+        labels={monthLabels}
+      />
     </ScrollView>
   );
 };

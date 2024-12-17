@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ThemeProvider, useTheme } from "./src/context/themeContext";
+import { preScheduleReminders } from "./src/utils/habitScheduler";
 
 import HomeScreen from './screens/HomeScreen';
 import AddHabitScreen from './screens/AddHabitScreen';
@@ -23,6 +24,16 @@ export default function App() {
 
 function AppWithTheme() {
   const { theme } = useTheme();
+
+  // Pre-schedule reminders when the app starts
+  useEffect(() => {
+    const initializeReminders = async () => {
+      await preScheduleReminders();
+    };
+
+    initializeReminders();
+  }, []);
+
 
   return (
     <NavigationContainer theme={theme}>
