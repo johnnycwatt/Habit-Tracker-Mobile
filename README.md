@@ -30,11 +30,11 @@ Below are screenshots showcasing the current status of the Habit Tracker Mobile 
 
 | **Home Screen** | **Habit List Screen** | **Add Habit Screen** |
 |------------------|-----------------------|-----------------------|
-| ![Home Screen](./screenshots/homescreen.jpg) | ![Habit List Screen](./screenshots/HabitListScreen.jpg) | ![Add Habit Screen](./screenshots/AddHabitScreen.jpg) |
+| ![Home Screen](docs/screenshots/homescreen.jpg) | ![Habit List Screen](docs/screenshots/HabitListScreen.jpg) | ![Add Habit Screen](docs/screenshots/AddHabitScreen.jpg) |
 
 | **Habit List (Menu)**                                  | **Progress Screen**                                    | **Reports Screen**                                  |
 |--------------------------------------------------------|-------------------------------------------------------|----------------------------------------------------|
-| ![Habit List Menu](./screenshots/HabitListScreen2.jpg) | ![Progress Screen](./screenshots/ProgressScreen.jpg)  | ![Reports Screen](./screenshots/ReportsScreen.jpg) |
+| ![Habit List Menu](docs/screenshots/HabitListScreen2.jpg) | ![Progress Screen](docs/screenshots/ProgressScreen.jpg)  | ![Reports Screen](docs/screenshots/ReportsScreen.jpg) |
 
 ## How to Run
 

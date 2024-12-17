@@ -1,11 +1,11 @@
 ---
-title: "Welcome to Habit Tracker Documentation"
+title: "Habit Tracker"
 layout: default
 ---
 
 # Habit Tracker Mobile Documentation
 
-![Habit Tracker Logo](../assets/images/habitTrackerIcon.png)
+![Habit Tracker Logo](habitTrackerIcon.png)
 
 This app is designed to help you build and maintain habits effectively while tracking your progress with detailed statistics and visualizations.
 
@@ -26,11 +26,11 @@ This app is designed to help you build and maintain habits effectively while tra
 
 | **Home Screen** | **Add Habit Screen** | **Habit List Screen** |
 |------------------|-----------------------|-----------------------|
-| ![Home Screen](../screenshots/homescreen.jpg) | ![Add Habit Screen](../screenshots/AddHabitScreen.jpg) | ![Habit List Screen](../screenshots/HabitListScreen.jpg) |
+| ![Home Screen](screenshots/homescreen.jpg) | ![Add Habit Screen](screenshots/AddHabitScreen.jpg) | ![Habit List Screen](screenshots/HabitListScreen.jpg) |
 
 | **Habit List Menu** | **Progress Screen** | **Reports Screen** |
 |----------------------|---------------------|---------------------|
-| ![Habit List Menu](../screenshots/HabitListScreen2.jpg) | ![Progress Screen](../screenshots/ProgressScreen.jpg) | ![Reports Screen](../screenshots/ReportsScreen.jpg) |
+| ![Habit List Menu](screenshots/HabitListScreen2.jpg) | ![Progress Screen](screenshots/ProgressScreen.jpg) | ![Reports Screen](screenshots/ReportsScreen.jpg) |
 
 ---
 

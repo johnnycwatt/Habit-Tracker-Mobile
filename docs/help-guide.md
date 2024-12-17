@@ -1,4 +1,7 @@
-# Help Guide
+---
+title: "Help Guide"
+layout: default
+---
 
 ## Creating and Managing Habits
 

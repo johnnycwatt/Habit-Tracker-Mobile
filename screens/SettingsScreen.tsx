@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Linking } from "react-native";
 import { useTheme } from "../src/context/themeContext";
 import { useNavigation } from "@react-navigation/native";
 import { exportToCSV, importFromCSV } from "../src/utils/csvManager";
@@ -8,6 +8,11 @@ const SettingsScreen = () => {
   const { toggleTheme, theme } = useTheme();
   const navigation = useNavigation();
   const [notification, setNotification] = useState({ message: "", type: "" });
+
+    const openHelpGuide = () => {
+      const url = "https://johnnycwatt.github.io/Habit-Tracker-Mobile/help-guide.html";
+      Linking.openURL(url).catch((err) => console.error("Failed to open URL:", err));
+    };
 
   const handleToggleTheme = () => {
     toggleTheme();
@@ -71,6 +76,7 @@ const SettingsScreen = () => {
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.settingOption, { backgroundColor: theme.colors.card }]}
+        onPress={openHelpGuide}
       >
         <Text style={[styles.optionText, { color: theme.colors.text }]}>
           Help and FAQs
