@@ -106,6 +106,9 @@ const AddHabitScreen = () => {
       />
 
       {/* Frequency Picker */}
+      <Text style={[styles.label, { color: theme.colors.text }]}>
+        Frequency:
+      </Text>
       <View
         style={[
           styles.pickerContainer,
