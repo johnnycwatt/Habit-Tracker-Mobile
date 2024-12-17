@@ -60,7 +60,6 @@ const EditHabitScreen = () => {
         message: "Habit updated successfully!",
         type: "success",
       });
-      setTimeout(() => navigation.goBack(), 1500);
     } catch (error) {
       console.error("Error updating habit:", error);
       setNotification({

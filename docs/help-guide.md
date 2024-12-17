@@ -31,6 +31,13 @@ As **Monthly Habits** are not expected to be completed every week, they are not 
 
 ---
 
+### Why is the completion score in my Monthly Report and View Progress different?
+In the **View Progress** page, the completion score shows your progress as it builds up over time throughout the month. It starts at 0% and increases as you complete your habit, giving you a sense of your progress so far.
+
+In the **Monthly Report**, the completion score reflects your overall consistency for the month. It starts at 100% and decreases only when you miss an expected completion date. This score is a great way to measure how consistent you were in maintaining the habit over the entire month.
+
+---
+
 ### How can I set up the Habit to be completed on specific days?
 When creating a habit, you have the option to select a **Daily**, **Weekly**, **Monthly**, or **Custom** frequency for the habit.
 

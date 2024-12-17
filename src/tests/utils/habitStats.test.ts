@@ -166,30 +166,55 @@ describe("HabitStats Utility Functions", () => {
     const habit = createHabit({
       frequency: "Daily",
       completionDates: ["2024-12-01", "2024-12-02", "2024-12-10", "2024-12-11"], // 4 completions
+      startDate: "2024-12-01",
     });
 
-    expect(calculateMonthlyCompletionRate(habit)).toBe(36); // 4 out of the 11 days passed in December
+    expect(calculateMonthlyCompletionRate(habit)).toBe(13); // 4 out of 31 days
   });
 
   it("calculates monthly completion rate for weekly habits", () => {
     const habit = createHabit({
       frequency: "Weekly",
-      completionDates: ["2024-12-04", "2024-12-11"], // 2 weeks completed
+      completionDates: ["2024-12-03", "2024-12-10"], // 2 completions
+      startDate: "2024-12-03",
     });
 
-    expect(calculateMonthlyCompletionRate(habit)).toBe(100); // Fully completed December
+    expect(calculateMonthlyCompletionRate(habit)).toBe(40); // 2 out of 5 expected weeks
   });
 
-  it("calculates monthly completion rate for habits starting mid-month", () => {
+
+
+  it("calculates monthly completion rate for monthly habits with a completion", () => {
     const habit = createHabit({
-      startDate: "2024-12-9",
-      frequency: "Daily",
-      completionDates: ["2024-12-9", "2024-12-11"], // Missed 10th.
+      frequency: "Monthly",
+      completionDates: ["2024-12-05"], // Completed this month
+      startDate: "2024-12-01",
     });
 
-    expect(calculateMonthlyCompletionRate(habit)).toBe(67); // 2 out of 3 days (Did on 9th, missed 10th , did on 11th)
+    expect(calculateMonthlyCompletionRate(habit)).toBe(100); // Completion exists
   });
 
+  it("calculates monthly completion rate for monthly habits with no completion", () => {
+    const habit = createHabit({
+      frequency: "Monthly",
+      completionDates: [], // No completions
+      startDate: "2024-12-01",
+    });
+
+    expect(calculateMonthlyCompletionRate(habit)).toBe(0); // No completion
+  });
+
+
+  it("calculates monthly completion rate for custom habits", () => {
+    const habit = createHabit({
+      frequency: "Custom",
+      customDays: [2, 4], // Tuesdays and Thursdays
+      completionDates: ["2024-12-03", "2024-12-05"], // 2 completions
+      startDate: "2024-12-01",
+    });
+
+    expect(calculateMonthlyCompletionRate(habit)).toBe(22); // 2 out of 9 expected custom days
+  });
 
   // Monthly Consistency Tests
   it("calculates monthly consistency for daily habits", () => {

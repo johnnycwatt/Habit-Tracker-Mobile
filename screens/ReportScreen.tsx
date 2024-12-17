@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import {
-  calculateMonthlyCompletionRate,
+  calculateMonthlyCompletionRateDescending,
   calculateBestStreak,
   calculateCurrentStreak,
   calculateMonthlyConsistency,
@@ -35,7 +35,7 @@ const ReportScreen = () => {
         const report = allHabits.map((habit) => ({
           name: habit.name,
           frequency: habit.frequency,
-          monthlyCompletionRate: calculateMonthlyCompletionRate(habit),
+          monthlyCompletionRate: calculateMonthlyCompletionRateDescending(habit),
           currentStreak: calculateCurrentStreak(habit),
           bestStreak: calculateBestStreak(habit),
           monthlyConsistency: calculateMonthlyConsistency(habit),
@@ -61,9 +61,10 @@ const ReportScreen = () => {
             : best;
         }, null);
 
-        const frequentlyMissed = report.filter(
-          (habit) => habit.monthlyCompletionRate < 50
-        );
+        const frequentlyMissed = report
+          .filter((habit) => habit.monthlyCompletionRate < 50)
+          .sort((a, b) => a.monthlyCompletionRate - b.monthlyCompletionRate)
+          .slice(0, 5); // Limit to 5 habits
 
         setSummary({
           bestHabit,

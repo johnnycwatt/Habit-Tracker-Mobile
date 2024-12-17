@@ -5,22 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1f800e69-e4d9-4952-886f-8eaf6e2aede7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/eas.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/CustomBarChart.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/habitScheduler.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/notificationManager.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/habits.ts" beforeDir="false" afterPath="$PROJECT_DIR$/database/habits.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/help-guide.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/help-guide.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/index.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/index.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/screens/HomeScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/screens/HomeScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/screenshots/ProgressScreen.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/docs/screenshots/ProgressScreen.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/AddHabitScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/screens/AddHabitScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/EditHabitScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/screens/EditHabitScreen.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/screens/ProgressScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/screens/ProgressScreen.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/screens/SettingsScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/screens/SettingsScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/ReportScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/screens/ReportScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/utils/habitStats.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/utils/habitStats.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/habitStats.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/habitStats.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

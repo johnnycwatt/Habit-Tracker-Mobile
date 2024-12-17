@@ -11,7 +11,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import RNPickerSelect from 'react-native-picker-select';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { addHabit } from '../database/habits';
+import { addHabit, getHabits } from '../database/habits';
 import { useTheme } from "../src/context/themeContext";
 
 const AddHabitScreen = () => {
@@ -32,11 +32,24 @@ const AddHabitScreen = () => {
   const [notification, setNotification] = useState({ message: '',type: '' });
   const navigation = useNavigation();
 
+  const isDuplicateHabit = async (habitName) => {
+    const habits = await getHabits();
+    return habits.some((habit) => habit.name.toLowerCase() === habitName.toLowerCase());
+  };
+
   const handleAddHabit = async () => {
     if (!name.trim()) {
       setNotification({ message: 'Name is required!', type: 'error' });
       return;
     }
+
+const duplicate = await isDuplicateHabit(name);
+    if (duplicate) {
+      setNotification({ message: 'Habit with this name already exists!', type: 'error' });
+      return;
+    }
+
+
 
     const selectedCustomDays = Object.keys(customDays).filter(
       (day) => customDays[day]
@@ -61,8 +74,22 @@ const AddHabitScreen = () => {
     try {
       await addHabit(newHabit); // Save to AsyncStorage
       setNotification({ message: 'Habit added successfully!', type: 'success' });
+
+      // Reset Screen States after 1.5 seconds
       setTimeout(() => {
-        //navigation.goBack();
+        setName('');
+        setFrequency('Daily');
+        setStartDate(new Date());
+        setCustomDays({
+          Monday: false,
+          Tuesday: false,
+          Wednesday: false,
+          Thursday: false,
+          Friday: false,
+          Saturday: false,
+          Sunday: false,
+        });
+        setNotification({ message: '', type: '' });
       }, 1500);
     } catch (error) {
       console.error('Error adding habit:', error);

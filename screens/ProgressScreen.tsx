@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { RouteProp, useRoute } from "@react-navigation/native";
+import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
 import { Habit } from "../database/habit";
 import { Calendar } from "react-native-calendars";
 import * as Progress from "react-native-progress";
@@ -19,6 +19,11 @@ const ProgressScreen = () => {
   const route = useRoute<RouteProp<{ params: { habit: Habit } }, "params">>();
   const { habit } = route.params;
   const { theme } = useTheme();
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.setOptions({ title: habit.name });
+  }, [habit.name, navigation]);
 
   const [currentStreak, setCurrentStreak] = useState(0);
   const [bestStreak, setBestStreak] = useState(0);
@@ -101,7 +106,6 @@ const ProgressScreen = () => {
     <ScrollView
       contentContainerStyle={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <Text style={[styles.title, { color: theme.colors.text }]}>{habit.name}</Text>
 
       {/* Calendar Section */}
       <Text style={[styles.calendarTitle, { color: theme.colors.text }]}>Completions</Text>
@@ -109,6 +113,7 @@ const ProgressScreen = () => {
         current={currentMonth.toISOString().split("T")[0]}
         markedDates={markedDates}
         maxDate={maxDate}
+        firstDay={1}
         disableArrowRight={isCurrentMonth}
         theme={{
           backgroundColor: theme.colors.background,
