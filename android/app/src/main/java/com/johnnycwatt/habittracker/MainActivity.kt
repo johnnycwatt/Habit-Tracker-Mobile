@@ -1,4 +1,4 @@
-package com.anonymous.HabitTrackerMobile
+package com.johnnycwatt.habittracker
 
 import android.os.Build
 import android.os.Bundle

@@ -21,7 +21,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   }
 }
 
-rootProject.name = 'HabitTrackerMobile'
+rootProject.name = 'Habit Tracker - Plan, Succeed'
 
 dependencyResolutionManagement {
   versionCatalogs {
