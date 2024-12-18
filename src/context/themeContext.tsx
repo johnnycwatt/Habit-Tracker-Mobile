@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const LightTheme = {
   ...DefaultTheme,
+  mode: "light",
   colors: {
     ...DefaultTheme.colors,
     background: "#f8f9fa",
@@ -23,6 +24,7 @@ export const LightTheme = {
 
 export const DarkThemeCustom = {
   ...DarkTheme,
+  mode: "dark",
   colors: {
     ...DarkTheme.colors,
     background: "#121212",

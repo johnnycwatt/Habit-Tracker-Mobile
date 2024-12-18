@@ -1,15 +1,21 @@
-import { getHabits } from "../../database/habits";
-import { scheduleNotification } from "../utils/notificationManager";
+import { getHabits, deleteHabit } from "../../database/habits";
+import { scheduleNotification, removeNotificationsForHabit } from "../utils/notificationManager";
 
 export const isHabitDueToday = (habit: any) => {
   const today = new Date();
   const dayOfWeek = today.toLocaleDateString("en-US", { weekday: "long" });
   const dayOfMonth = today.getDate();
-  const todayDate = today.toISOString().split("T")[0]; // YYYY-MM-DD format
+  const todayDate = today.toISOString().split("T")[0];
 
   const habitStartDate = new Date(habit.startDate);
   const habitDayOfWeek = habitStartDate.toLocaleDateString("en-US", { weekday: "long" });
   const habitDayOfMonth = habitStartDate.getDate();
+
+  // If startDate is in the future, the habit is not due
+  if (habitStartDate > today) {
+    console.log(`Habit "${habit.name}" is not due yet. Start date is in the future: ${habit.startDate}`);
+    return { isDueToday: false, isCompleted: false };
+  }
 
   let isDueToday = false;
 
@@ -31,30 +37,41 @@ export const isHabitDueToday = (habit: any) => {
       break;
 
     default:
-      isDueToday = false;y
+      isDueToday = false;
   }
 
-  if (habitStartDate > today) {
-    isDueToday = false;
-  }
-
-  const isCompleted = habit.completionDates?.includes(todayDate);
-
-  return { isDueToday, isCompleted };
+  console.log(`Habit "${habit.name}" due today: ${isDueToday}`);
+  return { isDueToday, isCompleted: habit.completionDates?.includes(todayDate) };
 };
 
-// Pre-schedule reminders for habits with reminders enabled
+
+// Pre-schedule reminders for habits
 export const preScheduleReminders = async () => {
   const habits = await getHabits();
   const now = new Date();
 
+
   habits.forEach(async (habit) => {
-    if (habit.reminderEnabled && isHabitDueToday(habit).isDueToday) {
+    const { isDueToday, isCompleted } = isHabitDueToday(habit);
+
+    if (habit.reminderEnabled && isDueToday && !isCompleted) {
       const reminderTime = new Date();
-      reminderTime.setHours(10, 0); // Default notification time at 10:00 AM
+      reminderTime.setHours(10, 0, 0, 0); // Default notification time at 10:00 AM
+
       if (reminderTime > now) {
-        await scheduleNotification(habit.name, reminderTime);
+        console.log(`Scheduling reminder for habit "${habit.name}" at ${reminderTime}.`);
+        await scheduleNotification(habit, reminderTime);
+      } else {
+        console.log(`Reminder time for habit "${habit.name}" has already passed.`);
       }
     }
   });
+
 };
+
+// Handle habit deletion
+export const deleteHabitAndRemoveNotifications = async (habitName: string) => {
+  await deleteHabit(habitName);
+  await removeNotificationsForHabit(habitName);
+};
+

@@ -1,11 +1,11 @@
 {
   "expo": {
     "name": "Habit Tracker - Plan, Succeed",
-    "slug": "habit-tracker-mobile",
+    "slug": "Habit",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/habitTrackerIcon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.HabitTrackerMobile"
+      "package": "com.johnnycwatt.habittracker"
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -36,29 +36,27 @@ const SettingsScreen = () => {
 
 const toggleReminder = async (index: number) => {
   const updatedHabits = [...habits];
-  updatedHabits[index].reminderEnabled = !updatedHabits[index].reminderEnabled;
+  const habit = updatedHabits[index];
+  habit.reminderEnabled = !habit.reminderEnabled;
 
   setHabits(updatedHabits);
 
-  await updateHabitReminder(
-    updatedHabits[index].name,
-    updatedHabits[index].reminderEnabled
-  );
+  await updateHabitReminder(habit.name, habit.reminderEnabled);
 
-  if (updatedHabits[index].reminderEnabled) {
+  if (habit.reminderEnabled) {
+    console.log(`Enabling reminder for "${habit.name}".`);
     const today = new Date();
-    const habit = updatedHabits[index];
-
-    if (isHabitDueToday(habit)) {
+    if (isHabitDueToday(habit).isDueToday) {
       const time = new Date();
       time.setHours(10, 0);
-      await scheduleNotification(habit.name, time);
-      console.log(`Scheduled reminder for: ${habit.name}`);
-    } else {
-      console.log(`${habit.name} is not due today. Notification skipped.`);
+      await scheduleNotification(habit, time);
     }
+  } else {
+    console.log(`Disabling reminder for "${habit.name}". Removing scheduled notifications.`);
+    await removeNotificationsForHabit(habit.name);
   }
 };
+
 
 
   const handleToggleTheme = () => {
@@ -110,7 +108,6 @@ const toggleReminder = async (index: number) => {
         </Text>
       </TouchableOpacity>
 
-      {/* Modal for Habit Reminders */}
       {/* Modal for Habit Reminders */}
       <Modal
         visible={modalVisible}
