@@ -3,12 +3,12 @@ import { scheduleNotification, removeNotificationsForHabit } from "../utils/noti
 
 export const isHabitDueToday = (habit: any) => {
   const today = new Date();
-  const dayOfWeek = today.toLocaleDateString("en-US", { weekday: "long" });
+  const dayOfWeek = today.toLocaleDateString("en-CA", { weekday: "long" });
   const dayOfMonth = today.getDate();
-  const todayDate = today.toISOString().split("T")[0];
+  const todayDate = today.toLocaleDateString('en-CA');
 
   const habitStartDate = new Date(habit.startDate);
-  const habitDayOfWeek = habitStartDate.toLocaleDateString("en-US", { weekday: "long" });
+  const habitDayOfWeek = habitStartDate.toLocaleDateString("en-CA", { weekday: "long" });
   const habitDayOfMonth = habitStartDate.getDate();
 
   // If startDate is in the future, the habit is not due

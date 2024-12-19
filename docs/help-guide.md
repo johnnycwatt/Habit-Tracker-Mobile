@@ -17,6 +17,19 @@ To delete a habit, navigate to the **View Habits** screen, tap on the habit you 
 
 ---
 
+### I Completed my habit yesterday but I forgot to mark it complete, can I mark previous days as complete?
+Absolutely. The important thing is you completed your habit! To do this:
+
+- Open the Progress screen for the habit you want to update. (**View Habits** -> Click the Habit -> Click **View Progress**)
+- Find the day you want to mark complete on the Completions Calendar
+- Press down on the day you want to mark complete (you may need to hold for 1-2 seconds)
+- A confirmation window will appear, asking if you'd like to mark that day as complete.
+- After clicking yes, the day will be marked complete
+
+**Note:** You cannot mark a day before the habit's start date as complete. 
+
+---
+
 ### How are the Weekly and Monthly Completion scores calculated?
 The **Weekly** and **Monthly Completion** scores are calculated based on how many times you completed the habit this week/month compared to how many times the habit is expected to be completed this week/month.
 

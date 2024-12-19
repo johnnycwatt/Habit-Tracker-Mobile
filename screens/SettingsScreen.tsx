@@ -253,6 +253,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     alignItems: "center",
+    height: 48,
   },
   closeButtonText: { fontSize: 16, fontWeight: "bold" },
 });

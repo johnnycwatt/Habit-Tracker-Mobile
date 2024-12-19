@@ -65,7 +65,7 @@ const duplicate = await isDuplicateHabit(name);
 
     const newHabit = {
       name,
-      startDate: startDate.toISOString().split("T")[0], //YYYY-MM-DD
+      startDate: startDate.toLocaleDateString('en-CA'), //YYYY-MM-DD
       frequency,
       customDays: frequency === "Custom" ? selectedCustomDays : null,
       color: theme.colors.card,

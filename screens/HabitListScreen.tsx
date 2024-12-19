@@ -39,7 +39,7 @@ const HabitListScreen = () => {
   const handleMarkComplete = async (habitName) => {
     try {
       const habit = habits.find((h) => h.name === habitName);
-      const today = new Date().toISOString().split('T')[0];
+      const today = new Date().toLocaleDateString('en-CA');
 
       if (habit.completionDates.includes(today)) {
         showNotification('Habit already marked complete today!', 'error');
@@ -310,9 +310,10 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     marginTop: 10,
+    height: 48,
   },
   cancelButtonText: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#0288d1',
   },
 

@@ -267,7 +267,7 @@ export const calculateMonthlyCompletionRate = (habit: Habit): number => {
       ) {
         if (date.getDay() === startDayOfWeek && date >= habitStartDate) {
           totalExpected++;
-          console.log("Expected Completion Day:", date.toISOString().split("T")[0]);
+          console.log("Expected Completion Day:", date.toLocaleDateString('en-CA'));
         }
       }
 
@@ -317,7 +317,7 @@ export const calculateMonthlyCompletionRate = (habit: Habit): number => {
       ) {
         if (customDays.includes(date.getDay()) && date >= habitStartDate) {
           totalExpected++;
-          console.log("Custom Expected Day:", date.toISOString().split("T")[0]);
+          console.log("Custom Expected Day:", date.toLocaleDateString('en-CA'));
         }
       }
 
@@ -416,9 +416,12 @@ export const calculateMonthlyCompletionRateDescending = (habit: Habit): number =
       break;
   }
 
-  return totalExpected > 0
-    ? Math.round((completed / totalExpected) * 100)
-    : 0;
+  const completionRate =
+    totalExpected > 0
+      ? Math.round((completed / totalExpected) * 100)
+      : 0;
+
+  return Math.min(completionRate, 100);
 };
 
 

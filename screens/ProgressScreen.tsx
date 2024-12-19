@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Modal, TouchableOpacity } from "react-native";
 import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
 import { Habit } from "../database/habit";
 import { Calendar } from "react-native-calendars";
@@ -14,6 +14,7 @@ import {
   calculateMonthlyConsistency,
 } from "../src/utils/habitStats";
 import { useTheme } from "../src/context/themeContext";
+import { updateHabit } from "../database/habits";
 
 const ProgressScreen = () => {
   const route = useRoute<RouteProp<{ params: { habit: Habit } }, "params">>();
@@ -21,10 +22,7 @@ const ProgressScreen = () => {
   const { theme } = useTheme();
   const navigation = useNavigation();
 
-  useEffect(() => {
-    navigation.setOptions({ title: habit.name });
-  }, [habit.name, navigation]);
-
+  const [localHabit, setLocalHabit] = useState<Habit>(habit);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [bestStreak, setBestStreak] = useState(0);
   const [weeklyCompletionRate, setWeeklyCompletionRate] = useState(0);
@@ -32,9 +30,15 @@ const ProgressScreen = () => {
   const [weeklyConsistency, setWeeklyConsistency] = useState(0);
   const [monthlyConsistency, setMonthlyConsistency] = useState(0);
   const [monthlyCompletions, setMonthlyCompletions] = useState<number[]>([]);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [today, setToday] = useState(new Date());
+
+  useEffect(() => {
+    navigation.setOptions({ title: habit.name });
+  }, [habit.name, navigation]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -45,6 +49,10 @@ const ProgressScreen = () => {
   }, []);
 
   useEffect(() => {
+    updateStats(localHabit);
+  }, [localHabit]);
+
+  const updateStats = (habit: Habit) => {
     setCurrentStreak(calculateCurrentStreak(habit));
     setBestStreak(calculateBestStreak(habit));
     setWeeklyCompletionRate(calculateWeeklyCompletionRate(habit));
@@ -61,14 +69,14 @@ const ProgressScreen = () => {
       }
     });
     setMonthlyCompletions(completions);
-  }, [habit]);
+  };
 
   const formatCompletionDates = (dates: string[]) => {
     const formatted: { [key: string]: { selected: boolean; selectedColor: string } } = {};
-    const todayFormatted = today.toISOString().split("T")[0];
+    const todayFormatted = today.toLocaleDateString("en-CA");
 
     dates.forEach((date) => {
-      const formattedDate = new Date(date).toISOString().split("T")[0];
+      const formattedDate = new Date(date).toLocaleDateString("en-CA");
       formatted[formattedDate] = { selected: true, selectedColor: "#90EE90" };
     });
 
@@ -79,7 +87,40 @@ const ProgressScreen = () => {
     return formatted;
   };
 
-  const filteredCompletionDates = habit.completionDates.filter((date) => {
+  const handleDateLongPress = (dateString: string) => {
+    const selectedDate = new Date(dateString);
+    const startDate = new Date(localHabit.startDate);
+
+    if (selectedDate < startDate) {
+      alert("You cannot mark a date before the habit's start date as complete.");
+      return;
+    }
+
+    if (localHabit.completionDates.includes(dateString)) {
+      return;
+    }
+
+    setSelectedDate(dateString);
+    setModalVisible(true);
+  };
+
+  const confirmMarkComplete = async () => {
+    if (!selectedDate) return;
+
+    try {
+      const updatedCompletionDates = [...localHabit.completionDates, selectedDate];
+      const updatedHabit = { ...localHabit, completionDates: updatedCompletionDates };
+
+      await updateHabit(localHabit.name, { completionDates: updatedCompletionDates });
+      setLocalHabit(updatedHabit); // Update the local state
+      setModalVisible(false);
+    } catch (error) {
+      alert("Failed to mark the date as complete.");
+      console.error("Error marking date as complete:", error);
+    }
+  };
+
+  const filteredCompletionDates = localHabit.completionDates.filter((date) => {
     const completionDate = new Date(date);
     return (
       completionDate.getFullYear() === currentMonth.getFullYear() &&
@@ -97,7 +138,7 @@ const ProgressScreen = () => {
     ];
 
 
-  const maxDate = today.toISOString().split("T")[0];
+  const maxDate = today.toLocaleDateString('en-CA');
   const isCurrentMonth =
     currentMonth.getFullYear() === today.getFullYear() &&
     currentMonth.getMonth() === today.getMonth();
@@ -110,7 +151,7 @@ const ProgressScreen = () => {
       {/* Calendar Section */}
       <Text style={[styles.calendarTitle, { color: theme.colors.text }]}>Completions</Text>
       <Calendar
-        current={currentMonth.toISOString().split("T")[0]}
+        current={currentMonth.toLocaleDateString('en-CA')}
         markedDates={markedDates}
         maxDate={maxDate}
         firstDay={1}
@@ -138,7 +179,38 @@ const ProgressScreen = () => {
         onMonthChange={(month) => {
           setCurrentMonth(new Date(month.year, month.month - 1));
         }}
+        onDayLongPress={(day) => handleDateLongPress(day.dateString)}
       />
+      {/* Modal for Confirmation */}
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: theme.colors.card }]}>
+            <Text style={[styles.modalTitle, { color: theme.colors.text }]}>
+              Mark {selectedDate} as complete?
+            </Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, { backgroundColor: "#76c7c0" }]}
+                onPress={confirmMarkComplete}
+              >
+                <Text style={styles.modalButtonText}>Yes</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, { backgroundColor: "#d32f2f" }]}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.modalButtonText}>No</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
 
 
       {/* Habit Statistics Section */}
@@ -270,6 +342,41 @@ const styles = StyleSheet.create({
   barChartLabel: {
     fontSize: 12,
   },
+    modalOverlay: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
+    modalContent: {
+      width: "80%",
+      padding: 20,
+      borderRadius: 8,
+      alignItems: "center",
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      textAlign: "center",
+      marginBottom: 20,
+    },
+    modalButtons: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      width: "100%",
+    },
+    modalButton: {
+      flex: 1,
+      padding: 12,
+      borderRadius: 8,
+      alignItems: "center",
+      marginHorizontal: 8,
+    },
+    modalButtonText: {
+      fontSize: 16,
+      fontWeight: "bold",
+      color: "#fff",
+    },
 });
 
 export default ProgressScreen;
