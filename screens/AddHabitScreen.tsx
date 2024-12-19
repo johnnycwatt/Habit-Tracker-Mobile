@@ -159,31 +159,41 @@ const duplicate = await isDuplicateHabit(name);
       </View>
 
       {/* Custom Days Selector */}
-      {frequency === "Custom" && (
-        <View style={styles.customDaysContainer}>
-          <Text style={[styles.label, { color: theme.colors.text }]}>
-            Select Custom Days:
-          </Text>
-          {Object.keys(customDays).map((day) => (
-            <View key={day} style={styles.customDay}>
-              <Switch
-                value={customDays[day]}
-                onValueChange={(newValue) =>
-                  setCustomDays({ ...customDays, [day]: newValue })
-                }
-                trackColor={{
-                  false: theme.colors.card,
-                  true: theme.colors.primary,
-                }}
-                thumbColor={customDays[day] ? theme.colors.card : "#f4f3f4"}
-              />
-              <Text style={[styles.customDayText, { color: theme.colors.text }]}>
-                {day}
-              </Text>
-            </View>
-          ))}
-        </View>
-      )}
+    {frequency === "Custom" && (
+      <View style={styles.customDaysContainer}>
+        <Text style={[styles.label, { color: theme.colors.text }]}>
+          Select Custom Days:
+        </Text>
+        {Object.keys(customDays).map((day) => (
+          <TouchableOpacity
+            key={day}
+            style={styles.customDayTouchable}
+            onPress={() =>
+              setCustomDays({ ...customDays, [day]: !customDays[day] })
+            }
+            accessible={true}
+            accessibilityLabel={`Toggle ${day} selection`}
+            accessibilityHint={`Turn ${day} ${customDays[day] ? "off" : "on"} for this habit.`}
+          >
+            <Switch
+              value={customDays[day]}
+              onValueChange={(newValue) =>
+                setCustomDays({ ...customDays, [day]: newValue })
+              }
+              trackColor={{
+                false: theme.colors.card,
+                true: theme.colors.primary,
+              }}
+              thumbColor={customDays[day] ? theme.colors.card : "#f4f3f4"}
+            />
+            <Text style={[styles.customDayText, { color: theme.colors.text }]}>
+              {day}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    )}
+
 
       {/* Start Date Selector */}
       <Text style={[styles.label, { color: theme.colors.text }]}>
@@ -292,6 +302,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#0288d1',
+  },
+
+  customDayTouchable: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+  },
+  customDayText: {
+    marginLeft: 16,
+    fontSize: 16,
   },
 });
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,25 +6,34 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
-} from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { getHabits, deleteHabit, updateHabit } from '../database/habits';
+} from "react-native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { getHabits, deleteHabit, updateHabit } from "../database/habits";
 import { useTheme } from "../src/context/themeContext";
+import {
+  calculateCurrentStreak,
+  calculateBestStreak,
+} from "../src/utils/habitStats";
 
 const HabitListScreen = () => {
   const [habits, setHabits] = useState([]);
   const [selectedHabit, setSelectedHabit] = useState(null);
-  const [notification, setNotification] = useState({ message: '', type: '' });
+  const [notification, setNotification] = useState({ message: "", type: "" });
   const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
   const { theme } = useTheme();
 
-  // Fetch habits from AsyncStorage
+  // Fetch and update habits with calculated stats
   useFocusEffect(
     React.useCallback(() => {
       const fetchHabits = async () => {
         const data = await getHabits();
-        setHabits(data);
+        const updatedHabits = data.map((habit) => ({
+          ...habit,
+          currentStreak: calculateCurrentStreak(habit),
+          bestStreak: calculateBestStreak(habit),
+        }));
+        setHabits(updatedHabits);
       };
 
       fetchHabits();
@@ -33,22 +42,25 @@ const HabitListScreen = () => {
 
   const showNotification = (message, type) => {
     setNotification({ message, type });
-    setTimeout(() => setNotification({ message: '', type: '' }), 3000);
+    setTimeout(() => setNotification({ message: "", type: "" }), 3000);
   };
 
   const handleMarkComplete = async (habitName) => {
     try {
       const habit = habits.find((h) => h.name === habitName);
-      const today = new Date().toLocaleDateString('en-CA');
+      const today = new Date().toLocaleDateString("en-CA");
 
       if (habit.completionDates.includes(today)) {
-        showNotification('Habit already marked complete today!', 'error');
+        showNotification("Habit already marked complete today!", "error");
         return;
       }
 
       // Update completion dates and streaks
       const updatedCompletionDates = [...habit.completionDates, today];
-      const updatedCurrentStreak = calculateCurrentStreak(updatedCompletionDates);
+      const updatedCurrentStreak = calculateCurrentStreak({
+        ...habit,
+        completionDates: updatedCompletionDates,
+      });
       const updatedBestStreak = Math.max(habit.bestStreak, updatedCurrentStreak);
 
       await updateHabit(habitName, {
@@ -57,61 +69,46 @@ const HabitListScreen = () => {
         bestStreak: updatedBestStreak,
       });
 
-      showNotification(`"${habitName}" marked as complete!`, 'success');
+      showNotification(`"${habitName}" marked as complete!`, "success");
       refreshHabits();
       setModalVisible(false);
     } catch (error) {
-      console.error('Error marking habit as complete:', error);
+      console.error("Error marking habit as complete:", error);
     }
   };
 
   const handleDeleteHabit = async (habitName) => {
     try {
       await deleteHabit(habitName);
-      showNotification(`"${habitName}" deleted successfully!`, 'success');
+      showNotification(`"${habitName}" deleted successfully!`, "success");
       refreshHabits();
       setModalVisible(false);
     } catch (error) {
-      console.error('Error deleting habit:', error);
+      console.error("Error deleting habit:", error);
     }
   };
 
   const refreshHabits = async () => {
     const data = await getHabits();
-    setHabits(data);
-  };
-
-  const calculateCurrentStreak = (completionDates) => {
-    const sortedDates = [...completionDates].sort();
-    let streak = 1;
-
-    for (let i = sortedDates.length - 1; i > 0; i--) {
-      const currentDate = new Date(sortedDates[i]);
-      const previousDate = new Date(sortedDates[i - 1]);
-
-      const diffInDays = (currentDate - previousDate) / (1000 * 60 * 60 * 24);
-      if (diffInDays === 1) {
-        streak++;
-      } else {
-        break;
-      }
-    }
-
-    return streak;
+    const updatedHabits = data.map((habit) => ({
+      ...habit,
+      currentStreak: calculateCurrentStreak(habit),
+      bestStreak: calculateBestStreak(habit),
+    }));
+    setHabits(updatedHabits);
   };
 
   const renderHabit = ({ item }) => (
     <TouchableOpacity
-      style={[
-        styles.habitCard,
-        { backgroundColor: theme.colors.card },
-      ]}
+      style={[styles.habitCard, { backgroundColor: theme.colors.card }]}
       onPress={() => {
         setSelectedHabit(item);
         setModalVisible(true);
       }}
     >
-      <Text style={[styles.habitName, { color: theme.colors.text }]}>{item.name}</Text>
+      <Text style={[styles.habitName, { color: theme.colors.text }]}>
+        {item.name}
+      </Text>
       <Text style={[styles.habitDetails, { color: theme.colors.text }]}>
         Frequency: {item.frequency}
       </Text>
@@ -128,7 +125,7 @@ const HabitListScreen = () => {
         <Text
           style={[
             styles.notification,
-            notification.type === 'success' ? styles.success : styles.error,
+            notification.type === "success" ? styles.success : styles.error,
           ]}
         >
           {notification.message}
@@ -140,14 +137,16 @@ const HabitListScreen = () => {
         keyExtractor={(item) => item.name}
         renderItem={renderHabit}
         ListEmptyComponent={
-          <Text style={styles.emptyMessage}>No habits added yet!</Text>
+          <Text style={[styles.emptyMessage, { color: theme.colors.text }]}>
+            No habits added yet!
+          </Text>
         }
         contentContainerStyle={{ paddingBottom: 16 }}
       />
 
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => navigation.navigate('AddHabit')}
+        onPress={() => navigation.navigate("AddHabit")}
       >
         <Text style={styles.addButtonText}>Add a New Habit</Text>
       </TouchableOpacity>
@@ -179,18 +178,17 @@ const HabitListScreen = () => {
               <TouchableOpacity
                 style={[styles.modalButton, styles.viewProgressButton]}
                 onPress={() => {
-                  navigation.navigate('ProgressScreen', { habit: selectedHabit });
+                  navigation.navigate("ProgressScreen", { habit: selectedHabit });
                   setModalVisible(false);
                 }}
               >
                 <Text style={styles.viewProgressButtonText}>View Progress</Text>
               </TouchableOpacity>
 
-
               <TouchableOpacity
                 style={[styles.modalButton, styles.editButton]}
                 onPress={() => {
-                  navigation.navigate('EditHabit', { habit: selectedHabit });
+                  navigation.navigate("EditHabit", { habit: selectedHabit });
                   setModalVisible(false);
                 }}
               >
@@ -217,6 +215,7 @@ const HabitListScreen = () => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -313,7 +312,7 @@ const styles = StyleSheet.create({
     height: 48,
   },
   cancelButtonText: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#0288d1',
   },
 
