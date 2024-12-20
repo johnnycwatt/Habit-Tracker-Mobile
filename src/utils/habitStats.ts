@@ -46,10 +46,7 @@ const getAdjustedStartOfMonth = (habit: Habit, today: Date): Date => {
   return startOfMonth;
 };
 
-export const calculateCurrentStreak = (habit: Habit): number => {
-  const completedDates = getCompletedDates(habit).sort((a, b) => b.getTime() - a.getTime());
-  if (!completedDates.length) return 0;
-
+const calculateCurrentStreakBase = (habit: Habit, completedDates: Date[]): number => {
   const today = new Date();
   let streak = 0;
 
@@ -77,23 +74,12 @@ export const calculateCurrentStreak = (habit: Habit): number => {
         else if (monthsDiff > streak + 1) break;
       }
       break;
-
-    case "Custom":
-      const customDays = normalizeCustomDays(habit.customDays || []);
-      for (let i = 0; i < completedDates.length; i++) {
-        if (customDays.includes(completedDates[i].getDay())) streak++;
-        else break;
-      }
-      break;
   }
 
   return streak;
 };
 
-export const calculateBestStreak = (habit: Habit): number => {
-  const completedDates = getCompletedDates(habit).sort((a, b) => a.getTime() - b.getTime());
-  if (!completedDates.length) return 0;
-
+const calculateBestStreakBase = (habit: Habit, completedDates: Date[]): number => {
   let bestStreak = 1;
   let currentStreak = 1;
 
@@ -115,18 +101,6 @@ export const calculateBestStreak = (habit: Habit): number => {
         if (differenceInMonths(completedDates[i], completedDates[i - 1]) === 1) currentStreak++;
         else currentStreak = 1;
         break;
-
-      case "Custom":
-        const customDays = normalizeCustomDays(habit.customDays || []);
-        const prevDay = completedDates[i - 1].getDay();
-        const currDay = completedDates[i].getDay();
-
-        if (customDays.includes(prevDay) && customDays.includes(currDay) && daysDiff <= 2) {
-          currentStreak++;
-        } else {
-          currentStreak = 1;
-        }
-        break;
     }
 
     bestStreak = Math.max(bestStreak, currentStreak);
@@ -134,6 +108,84 @@ export const calculateBestStreak = (habit: Habit): number => {
 
   return bestStreak;
 };
+
+export const calculateCurrentStreak = (habit: Habit): number => {
+  const completedDates = getCompletedDates(habit).sort((a, b) => b.getTime() - a.getTime());
+  if (!completedDates.length) return 0;
+
+  const customDays = normalizeCustomDays(habit.customDays || []);
+  let streak = 0;
+
+  switch (habit.frequency) {
+    case "Custom":
+      for (let i = 0; i < completedDates.length; i++) {
+        const currentDay = completedDates[i].getDay();
+        const nextDate = completedDates[i + 1] || null;
+
+        if (customDays.includes(currentDay)) {
+          streak++;
+
+          if (
+            nextDate &&
+            (!customDays.includes(nextDate.getDay()) || differenceInCalendarDays(completedDates[i], nextDate) > 2)
+          ) {
+            break;
+          }
+        } else {
+          break;
+        }
+      }
+      break;
+
+    default:
+      streak = calculateCurrentStreakBase(habit, completedDates);
+      break;
+  }
+
+  return streak;
+};
+
+export const calculateBestStreak = (habit: Habit): number => {
+  const completedDates = getCompletedDates(habit).sort((a, b) => a.getTime() - b.getTime());
+  if (!completedDates.length) return 0;
+
+  const customDays = normalizeCustomDays(habit.customDays || []);
+  let bestStreak = 0;
+  let currentStreak = 0;
+
+  switch (habit.frequency) {
+    case "Custom":
+      for (let i = 0; i < completedDates.length; i++) {
+        const currentDay = completedDates[i].getDay();
+        const nextDate = completedDates[i + 1] || null;
+
+        if (customDays.includes(currentDay)) {
+          currentStreak++;
+
+          if (
+            nextDate &&
+            (!customDays.includes(nextDate.getDay()) || differenceInCalendarDays(nextDate, completedDates[i]) > 2)
+          ) {
+            bestStreak = Math.max(bestStreak, currentStreak);
+            currentStreak = 0;
+          }
+        } else {
+          bestStreak = Math.max(bestStreak, currentStreak);
+          currentStreak = 0;
+        }
+      }
+
+      bestStreak = Math.max(bestStreak, currentStreak);
+      break;
+
+    default:
+      bestStreak = calculateBestStreakBase(habit, completedDates);
+      break;
+  }
+
+  return bestStreak;
+};
+
 
 
 export const calculateWeeklyCompletionRate = (habit: Habit): number => {
