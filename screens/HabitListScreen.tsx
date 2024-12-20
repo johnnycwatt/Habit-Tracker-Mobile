@@ -114,15 +114,27 @@ const HabitListScreen = () => {
     }
   };
 
-  const refreshHabits = async () => {
-    const data = await getHabits();
-    const updatedHabits = data.map((habit) => ({
-      ...habit,
-      currentStreak: calculateCurrentStreak(habit),
-      bestStreak: calculateBestStreak(habit),
-    }));
-    setHabits(updatedHabits);
-  };
+const refreshHabits = async () => {
+  const data = await getHabits();
+  const updatedHabits = data.map((habit) => ({
+    ...habit,
+    currentStreak: calculateCurrentStreak(habit),
+    bestStreak: calculateBestStreak(habit),
+  }));
+
+  setHabits(updatedHabits);
+
+
+  if (searchQuery.trim() === "") {
+    setFilteredHabits(updatedHabits);
+  } else {
+    const lowerCaseQuery = searchQuery.toLowerCase();
+    const filtered = updatedHabits.filter((habit) =>
+      habit.name.toLowerCase().includes(lowerCaseQuery)
+    );
+    setFilteredHabits(filtered);
+  }
+};
 
 const formatCustomDays = (days) => {
   if (!days || days.length === 0) return "No days selected";

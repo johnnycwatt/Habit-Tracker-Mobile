@@ -6,20 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="1f800e69-e4d9-4952-886f-8eaf6e2aede7" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/help-guide.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/help-guide.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/screenshots/AddHabitScreen.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/docs/screenshots/AddHabitScreen.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/screenshots/HabitListScreen.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/docs/screenshots/HabitListScreen.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/screenshots/HabitListScreen2.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/docs/screenshots/HabitListScreen2.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/screenshots/ProgressScreen.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/docs/screenshots/ProgressScreen.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/screenshots/ReportsScreen.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/docs/screenshots/ReportsScreen.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/screenshots/homescreen.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/docs/screenshots/homescreen.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/index.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/index.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/screens/HabitListScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/screens/HabitListScreen.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/screens/HomeScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/screens/HomeScreen.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/screens/ProgressScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/screens/ProgressScreen.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/context/themeContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/context/themeContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/habitStats.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/habitStats.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

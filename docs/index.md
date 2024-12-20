@@ -17,6 +17,7 @@ This app is designed to help you build and maintain habits effectively while tra
 - Forgot to mark a habit yesterday? No problem! Mark previous days as complete via the Progress Screen by pressing the desired day on the calendar.
 
 **Progress Tracking**
+
 Gain insights into your habits with:
 
 - **Current Streaks** and B**est Streaks**.
@@ -25,6 +26,7 @@ Gain insights into your habits with:
 - Completion Calendar highlighting completed dates in light green.
 
 **Reminders**
+
 Stay consistent with habit reminders:
 
 - Local notifications for habits due on their due dates.
@@ -34,12 +36,14 @@ Stay consistent with habit reminders:
 - Seamlessly switch between light and dark themes for a comfortable user experience.
 
 **Reports and Insights**
+
 Comprehensive **Monthly Reports** which include:
 
 - Color-coded completion rates: Green (80%+), Yellow (40%-79%), and Red (<40%).
 - A summary section featuring: Best-performing habit, Total habits tracked, Average completion rate, and Frequently missed habits.
 
 **Your Data is Yours**
+
 Export habit progress and data to CSV files for backup or further analysis.
 
 ---
