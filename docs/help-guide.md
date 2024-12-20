@@ -22,7 +22,7 @@ Absolutely. The important thing is you completed your habit! To do this:
 
 - Open the Progress screen for the habit you want to update. (**View Habits** -> Click the Habit -> Click **View Progress**)
 - Find the day you want to mark complete on the Completions Calendar
-- Press down on the day you want to mark complete (you may need to hold for 1-2 seconds)
+- Click on the day you want to mark complete
 - A confirmation window will appear, asking if you'd like to mark that day as complete.
 - After clicking yes, the day will be marked complete
 

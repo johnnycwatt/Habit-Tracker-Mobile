@@ -1,29 +1,39 @@
 # Habit Tracker Mobile
 
-This is the mobile version of the Habit Tracker application, built using React Native with Expo.
+This is the mobile version of the Habit Tracker application, built using React Native with Expo, designed to help you build, track, and maintain habits effortlessly. Whether you're forming new routines or improving existing ones, Habit Tracker helps you stay consistent while visualizing your progress with detailed statistics and reports.
 
 ## Features
 
-- Add, edit, and delete habits.
-- Support for multiple frequencies: **Daily**, **Weekly**, **Monthly**, and **Custom** (e.g., Mon-Wed-Fri or Sat-Sun).
-- Dark Mode support for improved user experience.
-- Progress tracking with:
-  - **Current Streaks** and **Best Streaks**.
-  - **Weekly** and **Monthly Completion Rates**.
-  - **Weekly** and **Monthly Consistency Metrics**.
-- Calendar view highlighting:
-  - Completed habit dates for the current and previous months (light green).
-  - Current Date (light blue).
-- Monthly Reports featuring:
-  - Color-coded reporting, with habits displayed as Light Green, Light Yellow, or Light Red depending on their completion rates.
-  - A summary section showing:
-    - Best habit.
-    - Total habits.
-    - Average completion rate.
-    - Frequently missed habits.
-  - Filter options to view habits by frequency (Daily, Weekly, Monthly, Custom).
-- Total Control of your Data: the ability to export habits data to CSV files for further analysis or to move to another service
-- Reminders to improve consistency. Push notifications can be sent out when habits are due as a reminder. This can be managed for each individual habit in the Settings page.
+**Flexible Habit Management**
+- Add, edit, and delete habits tailored to your lifestyle.
+- Customizable frequencies: **Daily, Weekly, Monthly,** or **Custom** (e.g., Mon-Wed-Fri or Sat-Sun).
+- Forgot to mark a habit yesterday? No problem! Mark previous days as complete via the Progress Screen by pressing the desired day on the calendar.
+
+**Progress Tracking**
+Gain insights into your habits with:
+
+- **Current Streaks** and B**est Streaks**.
+- Detailed **Weekly** and **Monthly** Completion Rates.
+- **Weekly** and **Monthly** Consistency Metrics.
+- Completion Calendar highlighting completed dates in light green.
+
+**Reminders**
+Stay consistent with habit reminders:
+
+- Local notifications for habits due on their due dates.
+- Flexible management of reminders per habit in the Settings Page.
+
+**Light and Dark Mode**
+- Seamlessly switch between light and dark themes for a comfortable user experience.
+
+**Reports and Insights**
+Comprehensive **Monthly Reports** which include:
+
+- Color-coded completion rates: Green (80%+), Yellow (40%-79%), and Red (<40%).
+- A summary section featuring: Best-performing habit, Total habits tracked, Average completion rate, and Frequently missed habits.
+
+**Your Data is Yours**
+Export habit progress and data to CSV files for backup or further analysis.
 
 ## Gallery
 

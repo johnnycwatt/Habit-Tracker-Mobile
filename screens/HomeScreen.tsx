@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image, FlatList } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, FlatList } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { getHabits } from "../database/habits";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -40,32 +40,25 @@ const HomeScreen = () => {
     });
   }, [navigation, theme.colors.text]);
 
+
   const renderHabitItem = ({ item }) => (
-    <View
-      style={[
-        styles.habitCard,
-        { backgroundColor: theme.colors.card },
-        item.isCompleted ? { backgroundColor: theme.colors.completedCard} : null,
-      ]}
-    >
-      <Text style={[styles.habitName, { color: theme.colors.text }]}>{item.name}</Text>
-      <Text style={[styles.habitDetails, { color: theme.colors.text }]}>
-        Frequency: {item.frequency}
-      </Text>
-      {item.isCompleted && (
-        <Text style={[styles.completedText, { color: theme.colors.completedText }]}>✔ Completed</Text>
-      )}
-    </View>
+  <TouchableOpacity
+    style={[
+      styles.habitCard,
+      { backgroundColor: theme.colors.card },
+      item.isCompleted ? { backgroundColor: theme.colors.completedCard } : null,
+    ]}
+    onPress={() => navigation.navigate("ProgressScreen", { habit: item })}
+  >
+    <Text style={[styles.habitName, { color: theme.colors.text }]}>{item.name}</Text>
+    <Text style={[styles.habitDetails, { color: theme.colors.text }]}>
+      {item.isCompleted ? "✔ Completed" : "Due Today"}
+    </Text>
+  </TouchableOpacity>
   );
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      {/* Habit Tracker Icon */}
-      <Image
-        source={require("../assets/images/habitTrackerIcon.png")}
-        style={styles.icon}
-      />
-
       {/* Habits Due Today Section */}
       <Text style={[styles.subtitle, { color: theme.colors.text }]}>Habits Due Today</Text>
       {habitsDueToday.length > 0 ? (
@@ -76,61 +69,49 @@ const HomeScreen = () => {
           style={styles.habitsList}
         />
       ) : (
-        <Text style={[styles.noHabitsText, { color: theme.colors.text }]}>
-          No habits due today!
-        </Text>
+        <View style={styles.emptyState}>
+          <Ionicons
+            name="checkmark-done-circle-outline"
+            size={50}
+            color={theme.colors.text}
+            style={styles.emptyStateIcon}
+          />
+          <Text style={[styles.noHabitsText, { color: theme.colors.text }]}>
+            No habits due today!
+          </Text>
+        </View>
       )}
 
-      {/* Add Habit Button */}
-      <TouchableOpacity
-        style={[
-          styles.button,
-          {
-            backgroundColor: theme.button.backgroundColor,
-            borderColor: theme.button.borderColor,
-          },
-        ]}
-        activeOpacity={0.7}
-        onPress={() => navigation.navigate("AddHabit")}
-      >
-        <Text style={[styles.buttonText, { color: theme.button.textColor }]}>
-          Add a New Habit
-        </Text>
-      </TouchableOpacity>
-
-      {/* View Habits Button */}
-      <TouchableOpacity
-        style={[
-          styles.button,
-          {
-            backgroundColor: theme.button.backgroundColor,
-            borderColor: theme.button.borderColor,
-          },
-        ]}
-        activeOpacity={0.7}
-        onPress={() => navigation.navigate("HabitList")}
-      >
-        <Text style={[styles.buttonText, { color: theme.button.textColor }]}>
-          View Habits
-        </Text>
-      </TouchableOpacity>
-
-      {/* Reports Button */}
-      <TouchableOpacity
-        style={[
-          styles.button,
-          {
-            backgroundColor: theme.button.backgroundColor,
-            borderColor: theme.button.borderColor,
-          },
-        ]}
-        activeOpacity={0.7}
-        onPress={() => navigation.navigate("ReportScreen")}
-      >
-        <Text style={[styles.buttonText, { color: theme.button.textColor }]}>
-          View Reports
-        </Text>
-      </TouchableOpacity>
+      {/* Footer Navigation Bar */}
+      <View style={[styles.footer, { backgroundColor: theme.colors.card }]}>
+        <TouchableOpacity
+          style={styles.footerButton}
+          onPress={() => navigation.navigate("AddHabit")}
+        >
+          <Ionicons name="add-circle-outline" size={28} color={theme.colors.text} />
+          <Text style={[styles.footerButtonText, { color: theme.colors.text }]}>
+            Add Habit
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.footerButton}
+          onPress={() => navigation.navigate("HabitList")}
+        >
+          <Ionicons name="list-circle-outline" size={28} color={theme.colors.text} />
+          <Text style={[styles.footerButtonText, { color: theme.colors.text }]}>
+            View Habits
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.footerButton}
+          onPress={() => navigation.navigate("ReportScreen")}
+        >
+          <Ionicons name="stats-chart-outline" size={28} color={theme.colors.text} />
+          <Text style={[styles.footerButtonText, { color: theme.colors.text }]}>
+            Reports
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -140,13 +121,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-  icon: {
-    width: 150,
-    height: 150,
-    marginBottom: 20,
-    alignSelf: "center",
-    resizeMode: "contain",
-  },
   subtitle: {
     fontSize: 22,
     fontWeight: "bold",
@@ -154,8 +128,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   habitsList: {
-    maxHeight: 200,
-    marginBottom: 20,
+    flex: 1, // Utilize full vertical space
   },
   habitCard: {
     padding: 16,
@@ -179,23 +152,32 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 5,
   },
+  emptyState: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyStateIcon: {
+    marginBottom: 10,
+  },
   noHabitsText: {
     fontSize: 16,
     textAlign: "center",
-    marginBottom: 20,
   },
-  button: {
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 16,
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
     alignItems: "center",
-    alignSelf: "center",
-    width: "80%",
-    paddingVertical: 12,
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderColor: "#ddd",
   },
-  buttonText: {
-    fontSize: 18,
-    fontWeight: "bold",
+  footerButton: {
+    alignItems: "center",
+  },
+  footerButtonText: {
+    fontSize: 12,
+    marginTop: 4,
   },
   settingsIcon: {
     marginRight: 16,

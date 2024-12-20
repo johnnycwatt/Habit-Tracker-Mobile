@@ -389,39 +389,41 @@ export const calculateMonthlyCompletionRateDescending = (habit: Habit): number =
       break;
 
     case "Custom":
-      const customDays = habit.customDays || [];
-      totalExpected =
-        customDays.reduce((count, day) => {
-          for (
-            let d = adjustedStartOfMonth.getDate();
-            d <= today.getDate();
-            d++
-          ) {
-            const date = new Date(
-              today.getFullYear(),
-              today.getMonth(),
-              d
-            );
-            if (date.getDay() === day) count++;
-          }
-          return count;
-        }, 0) || 0;
+      const customDays = normalizeCustomDays(habit.customDays || []);
+      const startOfMonth = getStartOfMonth(today);
+      const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
-      completed = completedDates.filter((date) => {
-        const dayOfWeek = date.getDay();
-        return (
-          date >= adjustedStartOfMonth && customDays.includes(dayOfWeek)
-        );
-      }).length;
+      // Calculate totalExpected for custom days
+      for (let date = new Date(startOfMonth); date <= endOfMonth; date.setDate(date.getDate() + 1)) {
+        if (customDays.includes(date.getDay())) {
+          totalExpected++;
+        }
+      }
+
+      // Count completed occurrences
+      completed = completedDates.filter(
+        (date) =>
+          date >= startOfMonth &&
+          date <= today &&
+          customDays.includes(date.getDay())
+      ).length;
+
       break;
+
+    default:
+      totalExpected = 0;
+      completed = 0;
   }
 
-  const completionRate =
-    totalExpected > 0
-      ? Math.round((completed / totalExpected) * 100)
-      : 0;
+  console.log("Debugging Custom Frequency:", {
+    totalExpected,
+    completed,
+    completionRate: totalExpected > 0 ? Math.round((completed / totalExpected) * 100) : 0,
+  });
 
-  return Math.min(completionRate, 100);
+  return totalExpected > 0
+    ? Math.round((completed / totalExpected) * 100)
+    : 0;
 };
 
 

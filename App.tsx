@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StatusBar } from 'react-native'; // Import StatusBar
+import { Image, StatusBar } from 'react-native'; // Import StatusBar
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ThemeProvider, useTheme } from "./src/context/themeContext";
@@ -39,8 +39,8 @@ function AppWithTheme() {
         <Stack.Navigator
           initialRouteName="Home"
           screenOptions={{
-            headerStyle: { backgroundColor: theme.colors.primary },
-            headerTintColor: theme.colors.text,
+            headerStyle: { backgroundColor: theme.colors.headerStyle },
+            headerTintColor: "#fff",
             headerTitleStyle: { fontWeight: "bold", fontSize: 20 },
             cardStyle: { backgroundColor: theme.colors.background },
           }}
@@ -48,7 +48,15 @@ function AppWithTheme() {
           <Stack.Screen
             name="Home"
             component={HomeScreen}
-            options={{ title: 'Habit Tracker' }}
+            options={{
+              headerTitle: () => (
+                <Image
+                  source={require("./assets/images/habitTrackerIconNoBackground.png")} // Path to your logo
+                  style={{ width: 70, height: 70, resizeMode: "contain" }}
+                />
+              ),
+              headerTitleAlign: "center", // Center-align the logo
+            }}
           />
           <Stack.Screen
             name="AddHabit"

@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
+  TextInput,
 } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { getHabits, deleteHabit, updateHabit } from "../database/habits";
@@ -20,6 +21,10 @@ const HabitListScreen = () => {
   const [selectedHabit, setSelectedHabit] = useState(null);
   const [notification, setNotification] = useState({ message: "", type: "" });
   const [modalVisible, setModalVisible] = useState(false);
+  const [confirmDeleteModalVisible, setConfirmDeleteModalVisible] = useState(false);
+  const [filteredHabits, setFilteredHabits] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
   const navigation = useNavigation();
   const { theme } = useTheme();
 
@@ -34,11 +39,25 @@ const HabitListScreen = () => {
           bestStreak: calculateBestStreak(habit),
         }));
         setHabits(updatedHabits);
+        setFilteredHabits(updatedHabits);
       };
 
       fetchHabits();
     }, [])
   );
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    if (query === "") {
+      setFilteredHabits(habits); // Show all habits if query is empty
+    } else {
+      const lowerCaseQuery = query.toLowerCase();
+      const filtered= habits.filter((habit) =>
+        habit.name.toLowerCase().includes(lowerCaseQuery)
+      );
+      setFilteredHabits(filtered);
+    }
+  };
 
   const showNotification = (message, type) => {
     setNotification({ message, type });
@@ -77,6 +96,13 @@ const HabitListScreen = () => {
     }
   };
 
+  const handleDeleteClick = (habitName) => {
+    setSelectedHabit(habitName);
+    setConfirmDeleteModalVisible(true);
+    setModalVisible(false);
+  };
+
+
   const handleDeleteHabit = async (habitName) => {
     try {
       await deleteHabit(habitName);
@@ -98,7 +124,17 @@ const HabitListScreen = () => {
     setHabits(updatedHabits);
   };
 
+const formatCustomDays = (days) => {
+  if (!days || days.length === 0) return "No days selected";
+
+  const correctOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  const sortedDays = days.sort((a, b) => correctOrder.indexOf(a) - correctOrder.indexOf(b));
+  return sortedDays.map((day) => day.slice(0, 3)).join(", ");
+};
+
+
   const renderHabit = ({ item }) => (
+
     <TouchableOpacity
       style={[styles.habitCard, { backgroundColor: theme.colors.card }]}
       onPress={() => {
@@ -110,7 +146,10 @@ const HabitListScreen = () => {
         {item.name}
       </Text>
       <Text style={[styles.habitDetails, { color: theme.colors.text }]}>
-        Frequency: {item.frequency}
+        Frequency:{" "}
+        {item.frequency === "Custom"
+          ? formatCustomDays(item.customDays)
+          : item.frequency}
       </Text>
       <Text style={[styles.habitDetails, { color: theme.colors.text }]}>
         Streak: {item.currentStreak} days
@@ -120,6 +159,14 @@ const HabitListScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      {/* Search Bar */}
+      <TextInput
+        style={[styles.searchBar, { backgroundColor: theme.colors.card, color: theme.colors.text }]}
+        placeholder="Search habits..."
+        placeholderTextColor={theme.colors.text + "88"} // Adjust opacity
+        value={searchQuery}
+        onChangeText={handleSearch}
+      />
       {/* Notification Message */}
       {notification.message ? (
         <Text
@@ -132,14 +179,21 @@ const HabitListScreen = () => {
         </Text>
       ) : null}
 
+      {/* Habits List */}
       <FlatList
-        data={habits}
+        data={filteredHabits}
         keyExtractor={(item) => item.name}
         renderItem={renderHabit}
         ListEmptyComponent={
-          <Text style={[styles.emptyMessage, { color: theme.colors.text }]}>
-            No habits added yet!
-          </Text>
+          habits.length === 0 ? (
+            <Text style={[styles.emptyMessage, { color: theme.colors.text }]}>
+              You haven't added any habits yet! Start by creating your first habit.
+            </Text>
+          ) : (
+            <Text style={[styles.emptyMessage, { color: theme.colors.text }]}>
+              No habits match your search. Try a different keyword or add a new habit!
+            </Text>
+          )
         }
         contentContainerStyle={{ paddingBottom: 16 }}
       />
@@ -150,6 +204,40 @@ const HabitListScreen = () => {
       >
         <Text style={styles.addButtonText}>Add a New Habit</Text>
       </TouchableOpacity>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={confirmDeleteModalVisible}
+          onRequestClose={() => setConfirmDeleteModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={[styles.modalContent, { backgroundColor: theme.colors.card }]}>
+              <Text style={[styles.modalTitle, { color: theme.colors.text }]}>
+                Confirm Deletion
+              </Text>
+              <Text style={[styles.modalMessage, { color: theme.colors.text }]}>
+                Are you sure you would like to delete "{selectedHabit}"? This can't be undone.
+              </Text>
+
+              <TouchableOpacity
+                style={[styles.modalButton, styles.deleteButton]}
+                onPress={async () => {
+                  await handleDeleteHabit(selectedHabit);
+                  setConfirmDeleteModalVisible(false);
+                }}
+              >
+                <Text style={styles.modalButtonText}>Delete</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => setConfirmDeleteModalVisible(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
 
       {/* Custom Modal */}
       {selectedHabit && (
@@ -197,7 +285,7 @@ const HabitListScreen = () => {
 
               <TouchableOpacity
                 style={[styles.modalButton, styles.deleteButton]}
-                onPress={() => handleDeleteHabit(selectedHabit.name)}
+                onPress={() => handleDeleteClick(selectedHabit.name)}
               >
                 <Text style={styles.modalButtonText}>Delete</Text>
               </TouchableOpacity>
@@ -231,6 +319,13 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     padding: 8,
     borderRadius: 8,
+  },
+  searchBar: {
+    height: 40,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 16,
+    fontSize: 16,
   },
   success: {
     color: '#2e7d32',

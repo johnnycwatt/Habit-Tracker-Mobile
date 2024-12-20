@@ -179,7 +179,7 @@ const ProgressScreen = () => {
         onMonthChange={(month) => {
           setCurrentMonth(new Date(month.year, month.month - 1));
         }}
-        onDayLongPress={(day) => handleDateLongPress(day.dateString)}
+        onDayPress={(day) => handleDateLongPress(day.dateString)}
       />
       {/* Modal for Confirmation */}
       <Modal
