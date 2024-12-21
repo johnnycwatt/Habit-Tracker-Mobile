@@ -109,31 +109,37 @@ const toggleReminder = async (index: number) => {
       </TouchableOpacity>
 
       {/* Modal for Habit Reminders */}
-      <Modal
-        visible={modalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={[styles.modalContent, { backgroundColor: theme.colors.card }]}>
-            <Text style={[styles.modalTitle, { color: theme.colors.text }]}>
-              Manage Habit Reminders
-            </Text>
-            {habits.map((habit, index) => (
-              <View key={index} style={styles.habitRow}>
-                <Text style={[styles.habitName, { color: theme.colors.text }]}>
-                  {habit.name}
+        <Modal
+          visible={modalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={[styles.modalContent, { backgroundColor: theme.colors.card }]}>
+              <ScrollView
+                contentContainerStyle={styles.scrollableList}
+                keyboardShouldPersistTaps="handled"
+              >
+                <Text style={[styles.modalTitle, { color: theme.colors.text }]}>
+                  Manage Habit Reminders
                 </Text>
-                <Switch
-                  value={habit.reminderEnabled}
-                  onValueChange={() => toggleReminder(index)}
-                  thumbColor={
-                    habit.reminderEnabled ? theme.colors.primary : "#f4f3f4"
-                  }
-                />
-              </View>
-            ))}
+                {habits.map((habit, index) => (
+                  <View key={index} style={styles.habitRow}>
+                    <Text style={[styles.habitName, { color: theme.colors.text }]}>
+                      {habit.name}
+                    </Text>
+                    <Switch
+                      value={habit.reminderEnabled}
+                      onValueChange={() => toggleReminder(index)}
+                      thumbColor={
+                        habit.reminderEnabled ? theme.colors.primary : "#f4f3f4"
+                      }
+                    />
+                  </View>
+                ))}
+
+              </ScrollView>
             <TouchableOpacity
               style={[styles.closeButton, { backgroundColor: theme.colors.primary }]}
               onPress={() => setModalVisible(false)}
@@ -142,9 +148,9 @@ const toggleReminder = async (index: number) => {
                 Close
               </Text>
             </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
       {/* Other Settings */}
       <TouchableOpacity
         style={[styles.settingOption, { backgroundColor: theme.colors.card }]}
@@ -232,6 +238,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: "90%",
+    maxHeight: "80%",
     padding: 20,
     borderRadius: 8,
     elevation: 5,
@@ -245,9 +252,11 @@ const styles = StyleSheet.create({
   habitRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
   },
-  habitName: { fontSize: 16 },
   closeButton: {
     marginTop: 20,
     padding: 12,
@@ -255,7 +264,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 48,
   },
-  closeButtonText: { fontSize: 16, fontWeight: "bold" },
+  scrollableList: {
+    flexGrow: 1,
+    paddingBottom: 20,
+  },
+  closeButtonText: { fontSize: 16, fontWeight: "bold"},
 });
 
 export default SettingsScreen;

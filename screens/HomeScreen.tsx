@@ -34,7 +34,7 @@ const HomeScreen = () => {
           style={styles.settingsIcon}
           onPress={() => navigation.navigate("Settings")}
         >
-          <Ionicons name="settings-outline" size={24} color={theme.colors.text} />
+          <Ionicons name="settings-outline" size={30} color={theme.colors.text} />
         </TouchableOpacity>
       ),
     });

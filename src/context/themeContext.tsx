@@ -15,6 +15,7 @@ export const LightTheme = {
     completedText: "#155724",
     calendarDisabledText: "#d9e1e8",
     headerStyle: "#0288d1",
+    today: "#ADD8E6",
   },
   button: {
     backgroundColor: "#e0f7fa",
@@ -36,6 +37,7 @@ export const DarkThemeCustom = {
     completedText: "#d4edda",
     calendarDisabledText: "rgba(255, 255, 255, 0.3)",
     headerStyle: "#0288d1",
+    today: "#5A8FAF",
   },
   button: {
     backgroundColor: "#e0f7fa",

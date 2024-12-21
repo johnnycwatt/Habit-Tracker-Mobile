@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Image, StatusBar } from 'react-native'; // Import StatusBar
+import { Image, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ThemeProvider, useTheme } from "./src/context/themeContext";
@@ -43,6 +43,11 @@ function AppWithTheme() {
             headerTintColor: "#fff",
             headerTitleStyle: { fontWeight: "bold", fontSize: 20 },
             cardStyle: { backgroundColor: theme.colors.background },
+            headerLeftContainerStyle: {
+              padding: 10,
+              marginLeft: 5,
+
+            },
           }}
         >
           <Stack.Screen
@@ -51,7 +56,7 @@ function AppWithTheme() {
             options={{
               headerTitle: () => (
                 <Image
-                  source={require("./assets/images/habitTrackerIconNoBackground.png")} // Path to your logo
+                  source={require("./assets/images/habitTrackerIconNoBackground.png")}
                   style={{ width: 70, height: 70, resizeMode: "contain" }}
                 />
               ),

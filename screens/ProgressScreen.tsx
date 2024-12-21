@@ -71,26 +71,26 @@ const ProgressScreen = () => {
     setMonthlyCompletions(completions);
   };
 
-  const formatCompletionDates = (dates: string[]) => {
-    const formatted: { [key: string]: { selected: boolean; selectedColor: string } } = {};
-    const todayFormatted = today.toLocaleDateString("en-CA");
+const formatCompletionDates = (dates: string[]) => {
+  const formatted: { [key: string]: { selected: boolean; selectedColor: string } } = {};
+  const todayFormatted = today.toLocaleDateString("en-CA");
 
-    dates.forEach((date) => {
-      const formattedDate = new Date(date).toLocaleDateString("en-CA");
-      formatted[formattedDate] = { selected: true, selectedColor: "#90EE90" };
-    });
+  dates.forEach((date) => {
+    const formattedDate = new Date(date).toLocaleDateString("en-CA");
+    formatted[formattedDate] = { selected: true, selectedColor: theme.colors.completedCard };
+  });
 
-    if (!formatted[todayFormatted]) {
-      formatted[todayFormatted] = { selected: true, selectedColor: "#ADD8E6" };
-    }
+  if (!formatted[todayFormatted]) {
+    formatted[todayFormatted] = { selected: true, selectedColor:theme.colors.today };
+  }
 
-    return formatted;
-  };
+  return formatted;
+};
+
 
   const handleDateLongPress = (dateString: string) => {
     const selectedDate = new Date(dateString);
     const startDate = new Date(localHabit.startDate);
-
     if (selectedDate < startDate) {
       alert("You cannot mark a date before the habit's start date as complete.");
       return;
@@ -148,39 +148,111 @@ const ProgressScreen = () => {
       contentContainerStyle={[styles.container, { backgroundColor: theme.colors.background }]}
     >
 
+
+
+
+      {/* Habit Statistics Section */}
+      <Text style={[styles.calendarTitle, { color: theme.colors.text }]}>Habit Statistics</Text>
+      <View style={styles.row}>
+        <View style={[styles.statCard, styles.smallCard, { backgroundColor: theme.colors.card }]}>
+          <Text style={[styles.statLabel, { color: theme.colors.text }]}>Current Streak</Text>
+          <Text style={[styles.statValue]}>
+            {currentStreak} days
+          </Text>
+        </View>
+        <View style={[styles.statCard, styles.smallCard, { backgroundColor: theme.colors.card }]}>
+          <Text style={[styles.statLabel, { color: theme.colors.text }]}>Best Streak</Text>
+          <Text style={[styles.statValue]}>{bestStreak} days</Text>
+        </View>
+      </View>
+
+      <View style={styles.row}>
+        <View style={styles.circularStatCard}>
+          <Progress.Circle
+            size={75}
+            progress={weeklyCompletionRate / 100}
+            color="#76c7c0"
+            unfilledColor="#e8f5e9"
+            borderWidth={0}
+            showsText={true}
+            formatText={() => `${weeklyCompletionRate}%`}
+            textStyle={{ fontSize: 16, color: theme.colors.text }}
+          />
+          <Text style={[styles.statLabel, { color: theme.colors.text }]}>This Week</Text>
+        </View>
+        <View style={styles.circularStatCard}>
+          <Progress.Circle
+            size={75}
+            progress={monthlyCompletionRate / 100}
+            color="#4caf50"
+            unfilledColor="#e8f5e9"
+            borderWidth={0}
+            showsText={true}
+            formatText={() => `${monthlyCompletionRate}%`}
+            textStyle={{ fontSize: 16, color: theme.colors.text }}
+          />
+          <Text style={[styles.statLabel, { color: theme.colors.text }]}>This Month</Text>
+        </View>
+      </View>
+
+    <View style={[styles.divider, {backgroundColor: theme.colors.text}]} />
       {/* Calendar Section */}
-      <Text style={[styles.calendarTitle, { color: theme.colors.text }]}>Completions</Text>
-      <Calendar
-        current={currentMonth.toLocaleDateString('en-CA')}
-        markedDates={markedDates}
-        maxDate={maxDate}
-        firstDay={1}
-        disableArrowRight={isCurrentMonth}
-        theme={{
-          backgroundColor: theme.colors.background,
-          calendarBackground: theme.colors.background,
-          textSectionTitleColor: theme.colors.text,
-          selectedDayBackgroundColor: theme.colors.primary,
-          selectedDayTextColor: theme.colors.card,
-          todayTextColor: theme.colors.primary,
-          dayTextColor: theme.colors.text,
-          textDisabledColor: theme.colors.calendarDisabledText,
-          dotColor: theme.colors.primary,
-          selectedDotColor: theme.colors.card,
-          arrowColor: theme.colors.text,
-          monthTextColor: theme.colors.text,
-          textDayFontWeight: "500",
-          textMonthFontWeight: "bold",
-          textDayHeaderFontWeight: "bold",
-          textDayFontSize: 14,
-          textMonthFontSize: 16,
-          textDayHeaderFontSize: 14,
-        }}
-        onMonthChange={(month) => {
-          setCurrentMonth(new Date(month.year, month.month - 1));
-        }}
-        onDayPress={(day) => handleDateLongPress(day.dateString)}
-      />
+    <Calendar
+      current={currentMonth.toLocaleDateString('en-CA')}
+      markedDates={markedDates}
+      maxDate={maxDate}
+      firstDay={1}
+      disableArrowRight={isCurrentMonth}
+      theme={{
+        backgroundColor: theme.colors.background,
+        calendarBackground: theme.colors.background,
+        textSectionTitleColor: theme.colors.text,
+        todayTextColor: theme.colors.primary,
+        dayTextColor: theme.colors.text,
+        textDisabledColor: theme.colors.calendarDisabledText,
+        arrowColor: theme.colors.text,
+        monthTextColor: theme.colors.text,
+        textDayFontWeight: "500",
+        textMonthFontWeight: "bold",
+        textDayHeaderFontWeight: "bold",
+        textDayFontSize: 14,
+        textMonthFontSize: 16,
+        textDayHeaderFontSize: 14,
+      }}
+      onMonthChange={(month) => {
+        setCurrentMonth(new Date(month.year, month.month - 1));
+      }}
+      onDayPress={(day) => handleDateLongPress(day.dateString)}
+      dayComponent={({ date, state }) => {
+        const isMarked = markedDates[date.dateString]?.selected;
+        const isToday = date.dateString === today.toLocaleDateString('en-CA');
+        const isFutureDate = new Date(date.dateString) > today;
+        const markedColor = markedDates[date.dateString]?.selectedColor;
+
+        return (
+          <TouchableOpacity
+        onPress={() => handleDateLongPress(date.dateString)}
+        disabled={isFutureDate || state === 'disabled'}
+        style={[
+          styles.dayTouchable,
+          isMarked && { backgroundColor: markedColor },
+          !isMarked && isToday && styles.today,
+          (isFutureDate || state === 'disabled') && styles.disabledDay,
+        ]}
+          >
+            <Text
+              style={[
+                styles.dayText,
+                { color: state === 'disabled' ? theme.colors.calendarDisabledText : theme.colors.text },
+              ]}
+            >
+              {date.day}
+            </Text>
+          </TouchableOpacity>
+        );
+      }}
+    />
+
       {/* Modal for Confirmation */}
       <Modal
         visible={modalVisible}
@@ -210,53 +282,7 @@ const ProgressScreen = () => {
           </View>
         </View>
       </Modal>
-
-
-
-      {/* Habit Statistics Section */}
-      <Text style={[styles.calendarTitle, { color: theme.colors.text }]}>Habit Statistics</Text>
-      <View style={styles.row}>
-        <View style={[styles.statCard, styles.smallCard, { backgroundColor: theme.colors.card }]}>
-          <Text style={[styles.statLabel, { color: theme.colors.text }]}>Current Streak</Text>
-          <Text style={[styles.statValue]}>
-            {currentStreak} days
-          </Text>
-        </View>
-        <View style={[styles.statCard, styles.smallCard, { backgroundColor: theme.colors.card }]}>
-          <Text style={[styles.statLabel, { color: theme.colors.text }]}>Best Streak</Text>
-          <Text style={[styles.statValue]}>{bestStreak} days</Text>
-        </View>
-      </View>
-
-      <View style={styles.row}>
-        <View style={styles.circularStatCard}>
-          <Progress.Circle
-            size={100}
-            progress={weeklyCompletionRate / 100}
-            color="#76c7c0"
-            unfilledColor="#e8f5e9"
-            borderWidth={0}
-            showsText={true}
-            formatText={() => `${weeklyCompletionRate}%`}
-            textStyle={{ fontSize: 16, color: theme.colors.text }}
-          />
-          <Text style={[styles.statLabel, { color: theme.colors.text }]}>Weekly Completion</Text>
-        </View>
-        <View style={styles.circularStatCard}>
-          <Progress.Circle
-            size={100}
-            progress={monthlyCompletionRate / 100}
-            color="#4caf50"
-            unfilledColor="#e8f5e9"
-            borderWidth={0}
-            showsText={true}
-            formatText={() => `${monthlyCompletionRate}%`}
-            textStyle={{ fontSize: 16, color: theme.colors.text }}
-          />
-          <Text style={[styles.statLabel, { color: theme.colors.text }]}>Monthly Completion</Text>
-        </View>
-      </View>
-
+    <View style={[styles.divider, {backgroundColor: theme.colors.text}]} />
       {/* Bar Chart for Monthly Completions history */}
       <Text style={[styles.calendarTitle, { color: theme.colors.text }]}>
        Completion History
@@ -284,12 +310,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
-    marginVertical: 16,
+    marginVertical: 5,
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 16,
+    marginBottom: 10,
+
   },
   statCard: {
     padding: 16,
@@ -367,7 +394,7 @@ const styles = StyleSheet.create({
     },
     modalButton: {
       flex: 1,
-      padding: 12,
+      padding: 20,
       borderRadius: 8,
       alignItems: "center",
       marginHorizontal: 8,
@@ -377,6 +404,34 @@ const styles = StyleSheet.create({
       fontWeight: "bold",
       color: "#fff",
     },
+  dayTouchable: {
+    width: 48,
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 4,
+    borderRadius: 24,
+  },
+  dayText: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  completedDay: {
+    backgroundColor: "#90EE90",
+    borderRadius: 24,
+  },
+  today: {
+    backgroundColor: "#ADD8E6",
+    borderRadius: 24,
+  },
+  disabledDay: {
+    opacity: 1,
+  },
+  divider: {
+    height: 1,
+    width: "100%",
+    marginVertical: 16,
+  },
 });
 
 export default ProgressScreen;

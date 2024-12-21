@@ -175,7 +175,7 @@ const formatCustomDays = (days) => {
       <TextInput
         style={[styles.searchBar, { backgroundColor: theme.colors.card, color: theme.colors.text }]}
         placeholder="Search habits..."
-        placeholderTextColor={theme.colors.text + "88"} // Adjust opacity
+        placeholderTextColor={theme.colors.text}
         value={searchQuery}
         onChangeText={handleSearch}
       />
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   searchBar: {
-    height: 40,
+    height: 48,
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 16,
@@ -346,6 +346,12 @@ const styles = StyleSheet.create({
   error: {
     color: '#d32f2f',
     backgroundColor: '#ffebee',
+  },
+
+  emptyMessage: {
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 16,
   },
   habitCard: {
     padding: 16,
@@ -389,7 +395,7 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     width: '100%',
-    paddingVertical: 12,
+    paddingVertical: 20,
     borderRadius: 8,
     alignItems: 'center',
     marginBottom: 10,
@@ -427,7 +433,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f3e5f5', // Light purple background
     borderColor: '#ab47bc', // Border color (darker purple)
     borderWidth: 1,
-    paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',
     marginBottom: 10,
