@@ -40,7 +40,7 @@ export const isHabitDueToday = (habit: any) => {
       isDueToday = false;
   }
 
-  console.log(`Habit "${habit.name}" due today: ${isDueToday}`);
+  //console.log(`Habit "${habit.name}" due today: ${isDueToday}`);
   return { isDueToday, isCompleted: habit.completionDates?.includes(todayDate) };
 };
 

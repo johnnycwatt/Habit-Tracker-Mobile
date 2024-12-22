@@ -33,7 +33,7 @@ export const addHabit = async (habit) => {
 export const getHabits = async () => {
   try {
     const habits = JSON.parse(await AsyncStorage.getItem('habits')) || [];
-    console.log('Retrieved habits:', habits);
+    //console.log('Retrieved habits:', habits);
     return habits;
   } catch (error) {
     console.error('Error retrieving habits:', error);

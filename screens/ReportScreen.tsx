@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+  FlatList,
+  Dimensions,
+} from "react-native";
 import {
   calculateMonthlyCompletionRateDescending,
   calculateBestStreak,
@@ -9,6 +17,7 @@ import {
 } from "../src/utils/habitStats";
 import { getHabits } from "../database/habits";
 import { useTheme } from "../src/context/themeContext";
+const isTablet = Dimensions.get("window").width >= 768;
 
 const ReportScreen = () => {
   const [habits, setHabits] = useState([]);
@@ -26,6 +35,7 @@ const ReportScreen = () => {
     averageCompletion: 0,
     frequentlyMissed: [],
   });
+  const [isModalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     const fetchHabits = async () => {
@@ -53,7 +63,7 @@ const ReportScreen = () => {
         const totalHabits = allHabits.length;
         const averageCompletion =
           report.reduce((acc, habit) => acc + habit.monthlyCompletionRate, 0) /
-          totalHabits || 0;
+            totalHabits || 0;
 
         const bestHabit = report.reduce((best, habit) => {
           return habit.monthlyCompletionRate > (best?.monthlyCompletionRate || 0)
@@ -83,7 +93,7 @@ const ReportScreen = () => {
   const getBackgroundColor = (completionRate) => {
     if (completionRate >= 80) return "#90EE90"; // LightGreen - 80% and above
     if (completionRate >= 40) return "#FFFFE0"; // LightYellow - between 40% and 79%
-    return "#F08080"; // LightCoral - Less then 40%
+    return "#F08080"; // LightCoral - Less than 40%
   };
 
   const renderGroupedHabits = () => {
@@ -139,6 +149,11 @@ const ReportScreen = () => {
     </View>
   );
 
+  const handleSelectFilter = (value) => {
+    setFilter(value);
+    setModalVisible(false);
+  };
+
   return (
     <ScrollView
       contentContainerStyle={[
@@ -178,19 +193,46 @@ const ReportScreen = () => {
         Habit Report
       </Text>
       <View style={styles.dropdownContainer}>
-        <Picker
-          selectedValue={filter}
-          onValueChange={(value) => setFilter(value)}
-          style={styles.picker}
-        >
-          <Picker.Item label="All" value="All" />
-          <Picker.Item label="Daily Habits" value="Daily" />
-          <Picker.Item label="Weekly Habits" value="Weekly" />
-          <Picker.Item label="Monthly Habits" value="Monthly" />
-          <Picker.Item label="Custom Habits" value="Custom" />
-        </Picker>
-      </View>
+    <TouchableOpacity
+      style={[
+        styles.touchableContainer,
+        { backgroundColor: theme.colors.card, borderColor: theme.colors.primary },
+      ]}
+      onPress={() => setModalVisible(true)}
+      accessible={true}
+      accessibilityLabel="Filter selection"
+      accessibilityHint="Opens the filter selection modal"
+    >
+      <Text style={{ color: theme.colors.text }}>{filter}</Text>
+    </TouchableOpacity>
 
+
+        {/* Filter Modal */}
+        <Modal
+          transparent={true}
+          visible={isModalVisible}
+          animationType="slide"
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalBackground}>
+            <View style={[styles.modalContainer, { backgroundColor: theme.colors.card }]}>
+              <FlatList
+                data={["All", "Daily", "Weekly", "Monthly", "Custom"]}
+                keyExtractor={(item) => item}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={[styles.modalItem, {backgroundColor: theme.mode === "dark" ? "#333" : "#f0f0f0"}]}
+                        //backgroundColor: theme.mode === "dark" ? "#333" : "#f0f0f0",
+                    onPress={() => handleSelectFilter(item)}
+                  >
+                    <Text style={{ color: theme.colors.text }}>{item}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+          </View>
+        </Modal>
+      </View>
 
       {renderGroupedHabits()}
     </ScrollView>
@@ -212,17 +254,31 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     paddingHorizontal: 16,
   },
-  dropdownLabel: {
-    fontSize: 16,
-    color: "#333",
-    marginBottom: 5,
+  modalBackground: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
-  picker: {
-    height: 50,
-    width: "100%",
-    backgroundColor: "#fff",
+  modalContainer: {
+    width: "80%",
     borderRadius: 8,
-    elevation: 2,
+    padding: 16,
+  },
+  modalItem: {
+    padding: isTablet ? 30 : 16,
+    marginVertical: 8,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+
+  modalItemText: {
+    fontSize: isTablet ? 20 : 16,
+    textAlign: "center",
   },
   summaryContainer: {
     backgroundColor: "#fff",
@@ -273,6 +329,14 @@ const styles = StyleSheet.create({
     color: "#666",
     textAlign: "center",
     marginBottom: 20,
+  },
+  touchableContainer: {
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    justifyContent: "center",
+    minHeight: 44, // Ensures the minimum touch target size
+    marginBottom: 16, // Adds space below for better spacing
   },
 });
 

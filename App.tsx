@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-import { Image, StatusBar } from 'react-native';
+import { Image, StatusBar, View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ThemeProvider, useTheme } from "./src/context/themeContext";
 import { preScheduleReminders } from "./src/utils/habitScheduler";
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import HomeScreen from './screens/HomeScreen';
 import AddHabitScreen from './screens/AddHabitScreen';
@@ -28,12 +28,11 @@ function AppWithTheme() {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
-    <StatusBar
-      barStyle={theme.mode === "dark" ? "light-content" : "dark-content"}
-      backgroundColor={theme.colors.background}
-    />
-
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <StatusBar
+        barStyle={theme.mode === "dark" ? "light-content" : "dark-content"}
+        backgroundColor={theme.colors.background}
+      />
 
       <NavigationContainer theme={theme}>
         <Stack.Navigator
@@ -46,7 +45,6 @@ function AppWithTheme() {
             headerLeftContainerStyle: {
               padding: 10,
               marginLeft: 5,
-
             },
           }}
         >
@@ -100,7 +98,7 @@ function AppWithTheme() {
           />
         </Stack.Navigator>
       </NavigationContainer>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -113,3 +111,9 @@ export default function App() {
     </ThemeProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
